@@ -1,7 +1,7 @@
 (() => {
   const parts = window.__DS_CHUNKS || [];
   if (parts.length !== 5) {
-    console.error("Dead Signal: expected 5 chunks, got", parts.length);
+    console.error("Dead Signal load error", parts.length);
     return;
   }
   const code = atob(parts.join(""));
