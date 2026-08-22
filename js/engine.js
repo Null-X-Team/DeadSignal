@@ -55,6 +55,23 @@ DS.Engine = class Engine {
     this.buildDoors();
     this.resetLoadout();
     this.bind();
+    this.loop = (t) => {
+      const dt = Math.min(0.05, (t - this.last || 16) / 1000);
+      this.last = t;
+      try {
+        this.update(dt);
+        const targetCam = DS.clamp(
+          this.player.x - DS.VIEW_W * 0.42,
+          0,
+          DS.WORLD_W - DS.VIEW_W,
+        );
+        this.camX += (targetCam - this.camX) * (1 - Math.exp(-6 * dt));
+        DS.drawWorld(this);
+      } catch (err) {
+        console.error(err);
+      }
+      this.raf = requestAnimationFrame(this.loop);
+    };
     this.raf = requestAnimationFrame(this.loop);
     this.pushHud();
     window.__deadSignal = this;
@@ -598,20 +615,6 @@ DS.Engine = class Engine {
 
     this.pushHud();
   }
-
-  loop = (t) => {
-    const dt = Math.min(0.05, (t - this.last || 16) / 1000);
-    this.last = t;
-    this.update(dt);
-    const targetCam = DS.clamp(
-      this.player.x - DS.VIEW_W * 0.42,
-      0,
-      DS.WORLD_W - DS.VIEW_W,
-    );
-    this.camX += (targetCam - this.camX) * (1 - Math.exp(-6 * dt));
-    DS.drawWorld(this);
-    this.raf = requestAnimationFrame(this.loop);
-  };
 
   pushHud() {
     const w = this.weapon();

@@ -1,35 +1,97 @@
 window.DS = window.DS || {};
 
 (function () {
-  const { FLOOR_Y, VIEW_H, VIEW_W } = DS;
-
   function rr(ctx, x, y, w, h, r) {
+    if (!(w > 0) || !(h > 0)) return;
+    const rad = Math.max(0, Math.min(r == null ? 3 : r, w / 2, h / 2));
     ctx.beginPath();
-    ctx.roundRect(x, y, w, h, r == null ? 3 : r);
-    ctx.fill();
-  }
-
-  function groundShadow(ctx, x, w) {
-    ctx.fillStyle = "rgba(0,0,0,0.4)";
-    ctx.beginPath();
-    ctx.ellipse(x, FLOOR_Y - 4, w, 7, 0, 0, Math.PI * 2);
+    if (typeof ctx.roundRect === "function") {
+      try {
+        ctx.roundRect(x, y, w, h, rad);
+      } catch (err) {
+        ctx.rect(x, y, w, h);
+      }
+    } else {
+      ctx.rect(x, y, w, h);
+    }
     ctx.fill();
   }
 
   function mixSkin(color) {
-    if (color === "#ff7d78") return "#c98a84";
-    if (color === "#f2b7ff") return "#c9b4c4";
+    if (color === "#ff7d78" || color === "#e35d6a") return "#c98a84";
+    if (color === "#f2b7ff" || color === "#c9d2dc") return "#c9b4c4";
     return "#8fbfa8";
   }
 
+  function drawHallway(ctx, cam) {
+    const VIEW_W = DS.VIEW_W;
+    const VIEW_H = DS.VIEW_H;
+    const FLOOR_Y = DS.FLOOR_Y;
+    const WALL_Y = DS.WALL_Y;
+
+    const wall = ctx.createLinearGradient(0, 0, 0, VIEW_H);
+    wall.addColorStop(0, "#06040b");
+    wall.addColorStop(0.2, "#140a24");
+    wall.addColorStop(0.48, "#2a1450");
+    wall.addColorStop(0.76, "#160c28");
+    wall.addColorStop(1, "#07050c");
+    ctx.fillStyle = wall;
+    ctx.fillRect(-30, -30, VIEW_W + 60, VIEW_H + 60);
+
+    ctx.fillStyle = "#0a0712";
+    ctx.fillRect(-30, -30, VIEW_W + 60, WALL_Y + 30);
+
+    const glow = ctx.createRadialGradient(
+      VIEW_W * 0.5,
+      90,
+      8,
+      VIEW_W * 0.5,
+      90,
+      VIEW_W * 0.62,
+    );
+    glow.addColorStop(0, "rgba(156,61,255,0.28)");
+    glow.addColorStop(1, "rgba(156,61,255,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, VIEW_W, FLOOR_Y);
+
+    const lightShift = -((cam % 140) + 140);
+    for (let x = lightShift; x < VIEW_W + 160; x += 140) {
+      ctx.fillStyle = "rgba(0,255,213,0.08)";
+      ctx.fillRect(x, 68, 74, 8);
+      ctx.fillStyle = "rgba(177,103,255,0.2)";
+      ctx.fillRect(x + 20, WALL_Y + 14, 5, FLOOR_Y - WALL_Y - 14);
+    }
+
+    ctx.fillStyle = "#0e0918";
+    ctx.fillRect(-30, FLOOR_Y, VIEW_W + 60, VIEW_H - FLOOR_Y + 30);
+
+    ctx.strokeStyle = "rgba(0,255,213,0.28)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-30, FLOOR_Y);
+    ctx.lineTo(VIEW_W + 30, FLOOR_Y);
+    ctx.stroke();
+
+    const gridShift = -((cam % 90) + 90);
+    for (let x = gridShift; x < VIEW_W + 120; x += 90) {
+      ctx.strokeStyle = "rgba(156,61,255,0.24)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x, FLOOR_Y);
+      ctx.lineTo(x + 52, VIEW_H);
+      ctx.stroke();
+    }
+  }
+
   function drawDoor(ctx, d, shopLive) {
+    const FLOOR_Y = DS.FLOOR_Y;
     const w = 96;
     const h = 210;
     const x = d.x - w / 2;
     const y = FLOOR_Y - h;
     ctx.fillStyle = "#07040d";
     ctx.fillRect(x - 8, y - 10, w + 16, h + 10);
-    ctx.strokeStyle = d.kind === "shop" ? "#00ffd5" : "rgba(156,61,255,0.55)";
+    ctx.strokeStyle = d.kind === "shop" ? "#00ffd5" : "rgba(156,61,255,0.7)";
     ctx.lineWidth = 3;
     ctx.strokeRect(x - 8, y - 10, w + 16, h + 10);
 
@@ -49,6 +111,13 @@ window.DS = window.DS || {};
     }
   }
 
+  function groundShadow(ctx, x, w) {
+    ctx.fillStyle = "rgba(0,0,0,0.4)";
+    ctx.beginPath();
+    ctx.ellipse(x, DS.FLOOR_Y - 4, w, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   function drawPlayer(ctx, g) {
     const p = g.player;
     const wpn = g.weapon();
@@ -65,7 +134,6 @@ window.DS = window.DS || {};
 
     ctx.save();
     ctx.translate(p.x, p.y + bob);
-    // Face left/right with a horizontal mirror. Never rotate the body 180.
     ctx.scale(p.facing, 1);
 
     ctx.save();
@@ -235,64 +303,25 @@ window.DS = window.DS || {};
 
   DS.drawWorld = function drawWorld(g) {
     const ctx = g.ctx;
+    const VIEW_W = DS.VIEW_W;
+    const VIEW_H = DS.VIEW_H;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = "rgba(0,0,0,0)";
+
     const shake = g.reduced ? 0 : g.trauma * g.trauma * 10;
     const ox = (Math.random() - 0.5) * shake;
     const oy = (Math.random() - 0.5) * shake;
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, VIEW_W, VIEW_H);
+    const cam = g.camX || 0;
+
     ctx.save();
-    ctx.translate(ox - g.camX, oy);
+    ctx.translate(ox, oy);
+    drawHallway(ctx, cam);
+    ctx.restore();
 
-    const start = g.camX - 40;
-    const end = g.camX + VIEW_W + 40;
-
-    const wall = ctx.createLinearGradient(0, 0, 0, FLOOR_Y);
-    wall.addColorStop(0, "#06040b");
-    wall.addColorStop(0.48, "#21113a");
-    wall.addColorStop(1, "#07050c");
-    ctx.fillStyle = wall;
-    ctx.fillRect(start, 0, end - start, VIEW_H);
-
-    ctx.fillStyle = "#0a0712";
-    ctx.fillRect(start, 0, end - start, DS.WALL_Y);
-
-    const glow = ctx.createRadialGradient(
-      g.camX + VIEW_W * 0.5,
-      VIEW_H * 0.16,
-      10,
-      g.camX + VIEW_W * 0.5,
-      VIEW_H * 0.16,
-      VIEW_W * 0.64,
-    );
-    glow.addColorStop(0, "rgba(156,61,255,.16)");
-    glow.addColorStop(1, "rgba(156,61,255,0)");
-    ctx.fillStyle = glow;
-    ctx.fillRect(start, 0, end - start, VIEW_H);
-
-    for (let x = 0; x < 3000; x += 140) {
-      ctx.fillStyle = "rgba(0,255,213,0.055)";
-      ctx.fillRect(x, 28, 78, 6);
-      ctx.fillStyle = "rgba(177,103,255,0.12)";
-      ctx.fillRect(x + 12, DS.WALL_Y + 20, 4, FLOOR_Y - DS.WALL_Y - 20);
-    }
-
-    ctx.fillStyle = "#0e0918";
-    ctx.fillRect(start, FLOOR_Y, end - start, VIEW_H - FLOOR_Y);
-    ctx.strokeStyle = "rgba(0,255,213,.13)";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(start, FLOOR_Y);
-    ctx.lineTo(end, FLOOR_Y);
-    ctx.stroke();
-
-    for (let x = 0; x < 3000; x += 90) {
-      ctx.strokeStyle = "rgba(156,61,255,.18)";
-      ctx.beginPath();
-      ctx.moveTo(x, FLOOR_Y);
-      ctx.lineTo(x + 48, VIEW_H);
-      ctx.stroke();
-    }
-
+    ctx.save();
+    ctx.translate(ox - cam, oy);
     g.doors.forEach((d) => drawDoor(ctx, d, g.phase === "intermission"));
     g.enemies.forEach((e) => drawEnemy(ctx, e));
     drawPlayer(ctx, g);
@@ -324,7 +353,6 @@ window.DS = window.DS || {};
       ctx.arc(g.player.x, g.player.y, pr * 190, 0, Math.PI * 2);
       ctx.stroke();
     }
-
     ctx.restore();
 
     if (g.flash > 0) {
@@ -335,7 +363,7 @@ window.DS = window.DS || {};
     if (g.phase === "combat" || g.phase === "intermission") {
       const x = g.mouse.x;
       const y = g.mouse.y;
-      ctx.strokeStyle = "rgba(0,255,213,.72)";
+      ctx.strokeStyle = "rgba(0,255,213,.75)";
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(x, y, 10, 0, Math.PI * 2);
