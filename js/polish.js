@@ -136,7 +136,7 @@
     var body = e.color || "#7ee8d4";
     var dark = "#150a1c";
     var skin = mixSkin(body);
-    var fade = Math.max(0.35, Math.min(1, (e.corpseT || 0) / 0.6);
+    var fade = Math.max(0.35, Math.min(1, (e.corpseT || 0) / 0.6));
     ctx.globalAlpha = fade;
     ctx.fillStyle = "rgba(0,0,0,0.4)";
     ctx.beginPath();
