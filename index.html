@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0a0b0d">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>Dead Signal v15</title>
-  <link rel="stylesheet" href="css/style.css?v=20260822v15">
+  <title>Dead Signal v16</title>
+  <link rel="stylesheet" href="css/style.css?v=20260822v16b">
   <style>
     #build-tag {
       position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
@@ -20,7 +20,7 @@
 <body>
   <div id="app">
     <div id="game-shell">
-      <div id="build-tag">BUILD v15 — hitbox/walk fix</div>
+      <div id="build-tag">BUILD v16 — sprites / tank HP</div>
       <canvas id="game" width="1280" height="720"></canvas>
       <div id="hud">
         <div id="status" class="hud-panel">
@@ -56,7 +56,7 @@
           </div>
         </div>
         <div id="help" class="hud-panel">
-          A/D walk · Mouse aim/fire · R reload · Space kick · E armory · 1-4 guns · Aim head/legs
+          A/D walk · Ctrl crouch · Mouse aim · Space kick · R reload · E armory · 1-6 guns
         </div>
         <div id="message"></div>
         <div id="rest-banner"></div>
@@ -98,25 +98,25 @@
       </div>
       <div id="menu">
         <div class="menu-card">
-          <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v15</div>
+          <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v16</div>
           <h1 id="menu-title">Dead<br><span>Signal</span></h1>
           <p class="subtitle" id="menu-copy">
-            Corridor combat. Aim for heads and legs. Wave 4+ brings armor.
-            Rail Lance face-shots end any signal.
+            Corridor combat. Tankier signals, sprites, crouch, leg kick, more guns.
+            Rail to the face ends any signal.
           </p>
           <div class="controls" id="menu-controls">
-            <div class="control"><kbd>A</kbd> <kbd>D</kbd> walk the hall</div>
+            <div class="control"><kbd>A</kbd> <kbd>D</kbd> walk</div>
+            <div class="control"><kbd>Ctrl</kbd> crouch</div>
             <div class="control"><kbd>Mouse</kbd> aim and fire</div>
-            <div class="control"><kbd>E</kbd> armory after a wave</div>
-            <div class="control"><kbd>Space</kbd> pulse kick</div>
-            <div class="control"><kbd>R</kbd> reload</div>
-            <div class="control"><kbd>1</kbd>-<kbd>4</kbd> switch guns</div>
+            <div class="control"><kbd>Space</kbd> kick</div>
+            <div class="control"><kbd>R</kbd> reload · <kbd>E</kbd> armory</div>
+            <div class="control"><kbd>1</kbd>-<kbd>6</kbd> guns</div>
           </div>
           <button class="primary-btn" id="start-btn" type="button">Start containment</button>
         </div>
       </div>
     </div>
   </div>
-  <script src="js/boot-v14.js?v=20260822v15"></script>
+  <script src="js/boot-v14.js?v=20260822v16b"></script>
 </body>
 </html>
