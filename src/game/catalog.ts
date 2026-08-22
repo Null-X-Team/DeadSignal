@@ -1,15 +1,12 @@
-window.DS = window.DS || {};
+import type { ShopItem, WeaponDef } from "./types";
 
-DS.VIEW_W = 1280;
-DS.VIEW_H = 720;
-DS.WORLD_W = 2920;
-DS.FLOOR_Y = 548;
-DS.WALL_Y = 118;
+export const VIEW_W = 1280;
+export const VIEW_H = 720;
+export const WORLD_W = 2920;
+export const FLOOR_Y = 548;
+export const WALL_Y = 118;
 
-DS.rand = (a, b) => a + Math.random() * (b - a);
-DS.clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-
-DS.WEAPONS = [
+export const WEAPONS: WeaponDef[] = [
   {
     id: "pistol",
     name: "Pulse Pistol",
@@ -22,7 +19,7 @@ DS.WEAPONS = [
     speed: 1240,
     pellets: 1,
     spread: 0.022,
-    color: "#00ffd5",
+    color: "#7ee8d4",
     recoil: 3,
     cost: 0,
   },
@@ -38,7 +35,7 @@ DS.WEAPONS = [
     speed: 980,
     pellets: 6,
     spread: 0.22,
-    color: "#c58aff",
+    color: "#d6dde8",
     recoil: 8,
     cost: 80,
   },
@@ -70,13 +67,13 @@ DS.WEAPONS = [
     speed: 2300,
     pellets: 1,
     spread: 0.004,
-    color: "#f7f3ff",
+    color: "#f4f6f8",
     recoil: 11,
     cost: 180,
   },
 ];
 
-DS.SHOP_ITEMS = [
+export const SHOP_ITEMS: ShopItem[] = [
   {
     id: "patch",
     name: "Field Patch",

@@ -1,0 +1,16 @@
+node_modules
+.tanstack
+.vercel
+.grok
+screenshots
+artifacts
+attachments
+.DS_Store
+*.log
+dist
+.output
+.nitro
+.wrangler
+.env
+.env.*
+!.env.example
