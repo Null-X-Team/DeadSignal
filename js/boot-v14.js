@@ -1,4 +1,4 @@
-// DeadSignal boot v15 - load engine.js then ui + gore
+// DeadSignal boot v15 - single gzip base64 engine + ui + gore
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -7,13 +7,28 @@
     s.onerror = function () { console.error("script fail", src); };
     document.head.appendChild(s);
   }
-  loadScript("js/engine.js", function () {
-    console.log("[DeadSignal] engine v15 loaded");
-    loadScript("js/ui.js", function () {
-      loadScript("js/gore.js", function () {
-        console.log("[DeadSignal] ui+gore ready");
-        if (window.__dsBoot) window.__dsBoot();
-      });
-    });
-  });
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "js/engine.gz.b64?v=" + Date.now());
+  xhr.onload = function () {
+    if (xhr.status !== 200) { console.error("engine b64 fail", xhr.status); return; }
+    try {
+      var bin = atob(xhr.responseText.trim());
+      var bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      var stream = new Response(bytes).body.pipeThrough(new DecompressionStream("gzip"));
+      new Response(stream).arrayBuffer().then(function (buf) {
+        var code = new TextDecoder().decode(buf);
+        (0, eval)(code);
+        console.log("[DeadSignal] engine v15 loaded", code.length);
+        loadScript("js/ui.js", function () {
+          loadScript("js/gore.js", function () {
+            console.log("[DeadSignal] ui+gore ready");
+            if (window.__dsBoot) window.__dsBoot();
+          });
+        });
+      }).catch(function (e) { console.error("inflate fail", e); });
+    } catch (e) { console.error("boot fail", e); }
+  };
+  xhr.onerror = function () { console.error("engine net fail"); };
+  xhr.send();
 })();
