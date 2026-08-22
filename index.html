@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0a0b0d">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>Dead Signal v12</title>
-  <link rel="stylesheet" href="css/style.css?v=20260822v12">
+  <title>Dead Signal v13</title>
+  <link rel="stylesheet" href="css/style.css?v=20260822v13">
   <style>
     #build-tag {
       position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
@@ -20,7 +20,7 @@
 <body>
   <div id="app">
     <div id="game-shell">
-      <div id="build-tag">BUILD v12 — full game</div>
+      <div id="build-tag">BUILD v13 — corridor scale</div>
       <canvas id="game" width="1280" height="720"></canvas>
       <div id="hud">
         <div id="status" class="hud-panel">
@@ -56,7 +56,7 @@
           </div>
         </div>
         <div id="help" class="hud-panel">
-          A/D walk the hall · Mouse aim/fire · R reload · Space kick · E armory · 1-4 guns
+          A/D walk · Mouse aim/fire · R reload · Space kick · E armory · 1-4 guns
         </div>
         <div id="message"></div>
         <div id="rest-banner"></div>
@@ -98,10 +98,10 @@
       </div>
       <div id="menu">
         <div class="menu-card">
-          <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v12</div>
+          <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v13</div>
           <h1 id="menu-title">Dead<br><span>Signal</span></h1>
           <p class="subtitle" id="menu-copy">
-            A 2D facility hallway. Signals come through the bay doors.
+            Corridor-scale 2D hallway. Signals come through the bay doors.
             Between waves, spend credits on guns and patch-ups at the armory.
           </p>
           <div class="controls" id="menu-controls">
@@ -117,9 +117,6 @@
       </div>
     </div>
   </div>
-  <script src="js/engine.js?v=20260822v12"></script>
-  <script src="js/ui.js?v=20260822v12"></script>
-  <script src="js/gore.js?v=20260822v12"></script>
-  <script src="js/polish.js?v=20260822v12"></script>
+  <script src="js/boot-v13.js?v=20260822v13"></script>
 </body>
 </html>
