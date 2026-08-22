@@ -68,8 +68,8 @@
     setText("weapon-name", hud.weaponName);
     setText("weapon-slot", "[" + hud.slot + "]");
 
-    var playing = hud.phase === "combat" || hud.phase === "intermission";
-    document.getElementById("hud").style.display = playing ? "block" : "none";
+    var playing = hud.phase === "combat" || hud.phase === "intermission" || hud.phase === "dying";
+    document.getElementById("hud").style.display = playing || hud.phase === "dying" ? "block" : "none";
     canvas.style.cursor = playing ? "crosshair" : "default";
 
     if (hud.message) {
@@ -98,7 +98,7 @@
         menuKicker.textContent = "Containment failed";
         menuTitle.innerHTML = "Signal<br><span>lost</span>";
         menuCopy.textContent =
-          "You held " +
+          "The signals dragged you under. You held " +
           hud.wave +
           " wave" +
           (hud.wave === 1 ? "" : "s") +
