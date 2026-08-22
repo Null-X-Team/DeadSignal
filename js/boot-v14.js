@@ -1,4 +1,4 @@
-// DeadSignal boot v15 - 8-part gzip base64 engine + ui + gore
+// DeadSignal boot v16 - sprites + 8 gzip engine parts + ui + gore
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -7,37 +7,44 @@
     s.onerror = function () { console.error("script fail", src); };
     document.head.appendChild(s);
   }
-  function get(url) {
-    return new Promise(function (resolve, reject) {
+  function loadEngineParts(cb) {
+    var n = 8, parts = [], loaded = 0;
+    function next() {
+      if (loaded >= n) {
+        try {
+          var b64 = parts.join("");
+          var bin = atob(b64);
+          var bytes = new Uint8Array(bin.length);
+          for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+          var stream = new Response(bytes).body.pipeThrough(new DecompressionStream("gzip"));
+          new Response(stream).arrayBuffer().then(function (buf) {
+            var code = new TextDecoder().decode(buf);
+            (0, eval)(code);
+            console.log("[DeadSignal] engine v16", code.length);
+            cb && cb();
+          }).catch(function (e) { console.error("inflate", e); });
+        } catch (e) { console.error("boot", e); }
+        return;
+      }
       var xhr = new XMLHttpRequest();
-      xhr.open("GET", url + "?v=" + Date.now());
+      xhr.open("GET", "js/e" + loaded + ".b64?v=" + Date.now());
       xhr.onload = function () {
-        if (xhr.status === 200) resolve(xhr.responseText.trim());
-        else reject(new Error("fail " + url + " " + xhr.status));
+        if (xhr.status === 200) { parts[loaded] = xhr.responseText.trim(); loaded++; next(); }
+        else console.error("part", loaded, xhr.status);
       };
-      xhr.onerror = function () { reject(new Error("net " + url)); };
+      xhr.onerror = function () { console.error("part net", loaded); };
       xhr.send();
-    });
+    }
+    next();
   }
-  var ids = [0,1,2,3,4,5,6,7];
-  Promise.all(ids.map(function (i) { return get("js/e" + i + ".b64"); }))
-    .then(function (parts) {
-      var bin = atob(parts.join(""));
-      var bytes = new Uint8Array(bin.length);
-      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-      return new Response(bytes).body.pipeThrough(new DecompressionStream("gzip"));
-    })
-    .then(function (stream) { return new Response(stream).arrayBuffer(); })
-    .then(function (buf) {
-      var code = new TextDecoder().decode(buf);
-      (0, eval)(code);
-      console.log("[DeadSignal] engine v15 loaded", code.length);
+  loadScript("js/sprites.js", function () {
+    loadEngineParts(function () {
       loadScript("js/ui.js", function () {
         loadScript("js/gore.js", function () {
-          console.log("[DeadSignal] ui+gore ready");
+          console.log("[DeadSignal] ready v16");
           if (window.__dsBoot) window.__dsBoot();
         });
       });
-    })
-    .catch(function (e) { console.error("boot fail", e); });
+    });
+  });
 })();
