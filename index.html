@@ -1,113 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#0a0b0d">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>Dead Signal</title>
-  <link rel="stylesheet" href="css/style.css?v=20260822c">
+<html><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache">
+<title>Dead Signal v9</title>
+<style>
+html,body{margin:0;height:100%;background:#0a0b0d;display:grid;place-items:center;font-family:system-ui,sans-serif;color:#f2f3f5}
+#shell{position:relative;width:min(1100px,100vw);aspect-ratio:16/9;background:#21113a;border:1px solid #2a2d34;border-radius:8px;overflow:hidden}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#tag{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:5;background:rgba(0,0,0,.7);color:#7ee8d4;font:12px monospace;padding:4px 10px;border-radius:4px}
+#menu{position:absolute;inset:0;z-index:3;display:grid;place-items:center;background:rgba(10,11,13,.55)}
+#menu.hidden{display:none}
+.card{background:#121317;border:1px solid #2a2d34;border-radius:12px;padding:28px;text-align:center;max-width:420px}
+h1{margin:8px 0;font-size:48px;line-height:.9}h1 span{color:#7ee8d4}
+button{margin-top:16px;padding:14px 22px;border:0;border-radius:6px;background:#f2f3f5;color:#0a0b0d;font-weight:600;cursor:pointer;width:100%}
+#hud{position:absolute;inset:0;z-index:2;pointer-events:none;font:12px monospace}
+.panel{position:absolute;padding:10px;background:rgba(10,11,13,.8);border:1px solid #2a2d34;border-radius:6px}
+</style>
 </head>
 <body>
-  <div id="app">
-    <div id="game-shell">
-      <canvas id="game" width="1280" height="720" style="background:#1a0a30"></canvas>
-      <div id="hud">
-        <div id="status" class="hud-panel">
-          <div class="label">Vitals</div>
-          <div class="value">
-            <span id="health-text" class="red">100</span> HP
-            <span class="label" style="margin-left:13px">Score</span>
-            <span id="score" class="cyan">0</span>
-          </div>
-          <div class="bar"><div id="health-fill" class="fill"></div></div>
-          <div class="label" style="margin-top:7px">Credits <span id="credits" class="cyan">0</span></div>
-        </div>
-        <div id="wave-box" class="hud-panel">
-          <div class="label">Wave</div>
-          <div class="value">
-            <span id="wave-number">0</span>
-            <span style="color:var(--muted);font-size:13px"> / inf</span>
-          </div>
-          <div class="label" style="margin-top:5px"><span id="enemies-left">0</span> signals</div>
-        </div>
-        <div id="weapon-box" class="hud-panel">
-          <div class="label">
-            <span id="weapon-name">Pulse Pistol</span>
-            <span id="weapon-slot" class="cyan">[1]</span>
-          </div>
-          <div id="ammo">
-            <span id="ammo-current">12</span>
-            <small>/ <span id="ammo-reserve">72</span></small>
-          </div>
-          <div id="reload"><div id="reload-fill"></div></div>
-          <div class="label" style="margin-top:7px">
-            Kick <span id="kick-status" class="good">READY</span>
-          </div>
-        </div>
-        <div id="help" class="hud-panel">
-          A/D walk the hall · Mouse aim/fire · R reload · Space kick · E armory · 1-4 guns
-        </div>
-        <div id="message"></div>
-        <div id="rest-banner"></div>
-      </div>
-      <button id="open-armory" class="primary-btn" type="button">Open armory</button>
-      <div id="touch-controls">
-        <button id="left-btn" class="touch-btn" type="button" aria-label="Move left">
-          <svg viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
-        </button>
-        <button id="right-btn" class="touch-btn" type="button" aria-label="Move right">
-          <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
-        </button>
-        <button id="reload-btn" class="touch-btn" type="button" aria-label="Reload">
-          <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.2-5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
-        </button>
-        <button id="kick-btn" class="touch-btn" type="button" aria-label="Pulse kick">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
-        </button>
-        <button id="shop-btn" class="touch-btn" type="button" aria-label="Armory">
-          <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 20V12h6v8" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
-        </button>
-      </div>
-      <div id="shop" class="hidden">
-        <div class="shop-card">
-          <div class="shop-head">
-            <div>
-              <div class="label cyan">Facility armory</div>
-              <h2>Supply rack</h2>
-              <p class="subtitle" style="margin:8px 0 0">
-                Credits <span id="shop-credits">0</span>. Guns unlock to slots 2-4. Patch-ups seal vitals.
-              </p>
-            </div>
-            <button id="close-shop" class="ghost-btn" type="button">Close</button>
-          </div>
-          <ul id="shop-list" class="shop-list"></ul>
-          <p id="shop-note"></p>
-          <button id="next-wave" class="primary-btn" type="button">Next wave</button>
-        </div>
-      </div>
-      <div id="menu">
-        <div class="menu-card">
-          <div class="label cyan" id="menu-kicker">Null X Interactive</div>
-          <h1 id="menu-title">Dead<br><span>Signal</span></h1>
-          <p class="subtitle" id="menu-copy">
-            A 2D facility hallway. Signals come through the bay doors.
-            Between waves, spend credits on guns and patch-ups at the armory.
-          </p>
-          <div class="controls" id="menu-controls">
-            <div class="control"><kbd>A</kbd> <kbd>D</kbd> walk the hall</div>
-            <div class="control"><kbd>Mouse</kbd> aim and fire</div>
-            <div class="control"><kbd>E</kbd> armory after a wave</div>
-            <div class="control"><kbd>Space</kbd> pulse kick</div>
-            <div class="control"><kbd>R</kbd> reload</div>
-            <div class="control"><kbd>1</kbd>-<kbd>4</kbd> switch guns</div>
-          </div>
-          <button class="primary-btn" id="start-btn" type="button">Start containment</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script src="js/engine.js?v=20260822c"></script>
-  <script src="js/ui.js?v=20260822c"></script>
-</body>
-</html>
+<div id="shell">
+<div id="tag">BUILD v9 — if you see this, cache is cleared</div>
+<canvas id="c" width="1280" height="720"></canvas>
+<div id="hud"><div class="panel" style="top:12px;left:12px">Vitals <b id="hp">100</b> HP</div>
+<div class="panel" style="top:12px;right:12px;text-align:right">Wave <b id="wv">0</b></div></div>
+<div id="menu"><div class="card">
+<div style="color:#7ee8d4;font-size:10px;letter-spacing:2px">NULL X · BUILD v9</div>
+<h1>Dead<br><span>Signal</span></h1>
+<p style="color:#8b909a;font-size:14px">Hallway shooter. If doors are behind this card, the canvas works.</p>
+<button id="go" type="button">Start containment</button>
+</div></div>
+</div>
+<script>
+(function(){
+  const c=document.getElementById('c');
+  const ctx=c.getContext('2d');
+  const W=1280,H=720,FY=548;
+  const doors=[{x:280,l:'ARMORY',c:'#00ffd5'},{x:560,l:'BAY 1',c:'#9c3dff'},{x:840,l:'BAY 2',c:'#9c3dff'},{x:1120,l:'BAY 3',c:'#9c3dff'}];
+  let playing=false, px=520, t=0, enemies=[], wave=0, hp=100, spawn=0;
+  function hall(){
+    const g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#06040b');g.addColorStop(0.45,'#2a1450');g.addColorStop(1,'#07050c');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#0a0712';ctx.fillRect(0,0,W,118);
+    ctx.fillStyle='#0e0918';ctx.fillRect(0,FY,W,H-FY);
+    ctx.strokeStyle='rgba(0,255,213,0.35)';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(0,FY);ctx.lineTo(W,FY);ctx.stroke();
+    for(let x=0;x<W;x+=90){ctx.strokeStyle='rgba(156,61,255,0.2)';ctx.beginPath();ctx.moveTo(x,FY);ctx.lineTo(x+50,H);ctx.stroke();}
+    doors.forEach(d=>{
+      const w=96,h=210,x=d.x-w/2,y=FY-h;
+      ctx.fillStyle='#07040d';ctx.fillRect(x-8,y-10,w+16,h+10);
+      ctx.strokeStyle=d.c;ctx.lineWidth=3;ctx.strokeRect(x-8,y-10,w+16,h+10);
+      ctx.fillStyle='#1a1028';ctx.fillRect(x,y,w,h);
+      ctx.fillStyle='#a99fba';ctx.font='700 11px monospace';ctx.textAlign='center';
+      ctx.fillText(d.l,d.x,y-16);
+    });
+  }
+  function player(){
+    const py=FY-42;
+    ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(px-20,FY-8,40,6);
+    ctx.fillStyle='#d9cced';ctx.fillRect(px-12,py-24,26,34);
+    ctx.fillStyle='#1a1028';ctx.fillRect(px-8,py-18,18,24);
+    ctx.fillStyle='#d7c4b0';ctx.fillRect(px-8,py-44,18,20);
+    ctx.fillStyle='#0b0814';ctx.fillRect(px-10,py-48,22,14);
+    ctx.fillStyle='#7ee8d4';ctx.fillRect(px+10,py-22,36,10);
+  }
+  function loop(){
+    t+=0.016;hall();player();
+    if(playing){
+      enemies.forEach(e=>{
+        e.x+=(px-e.x)*0.01; if(Math.abs(e.x-px)<30){hp=Math.max(0,hp-0.05);}
+        ctx.fillStyle=e.col;ctx.fillRect(e.x-14,FY-52,28,40);
+        ctx.fillStyle='#d7c4b0';ctx.fillRect(e.x-8,FY-72,16,18);
+      });
+      spawn-=0.016; if(spawn<=0 && enemies.length<6){enemies.push({x:doors[1+(enemies.length%3)].x,col:'#7ee8d4'});spawn=1.2;}
+      document.getElementById('hp').textContent=Math.ceil(hp);
+      document.getElementById('wv').textContent=String(wave);
+    }
+    requestAnimationFrame(loop);
+  }
+  document.getElementById('go').onclick=function(){
+    document.getElementById('menu').classList.add('hidden');
+    playing=true;wave=1;hp=100;enemies=[];
+  };
+  loop();
+})();
+</script>
+</body></html>
