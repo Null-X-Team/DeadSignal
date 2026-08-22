@@ -1,4 +1,4 @@
-// DeadSignal boot v15 - 4-part gzip base64 engine + ui + gore
+// DeadSignal boot v15 - 8-part gzip base64 engine + ui + gore
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -13,13 +13,14 @@
       xhr.open("GET", url + "?v=" + Date.now());
       xhr.onload = function () {
         if (xhr.status === 200) resolve(xhr.responseText.trim());
-        else reject(new Error("fail " + url));
+        else reject(new Error("fail " + url + " " + xhr.status));
       };
       xhr.onerror = function () { reject(new Error("net " + url)); };
       xhr.send();
     });
   }
-  Promise.all([0,1,2,3].map(function (i) { return get("js/e" + i + ".b64"); }))
+  var ids = [0,1,2,3,4,5,6,7];
+  Promise.all(ids.map(function (i) { return get("js/e" + i + ".b64"); }))
     .then(function (parts) {
       var bin = atob(parts.join(""));
       var bytes = new Uint8Array(bin.length);
