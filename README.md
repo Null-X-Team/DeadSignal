@@ -1,26 +1,32 @@
 # Dead Signal
 
-Null X Interactive corridor survival. Pure HTML, CSS, and JavaScript — open `index.html` in a browser. No install, no build, no unzip.
+2D hallway shooter. Hostiles come through bay doors. Between waves, buy guns and patch-ups at the armory.
 
-## Play
+## Play in a browser
 
-1. Open the repo on GitHub: https://github.com/Null-X-Team/DeadSignal
-2. Click **Code** → **Download ZIP**, extract if you want a local copy, then double-click `index.html`
-3. Or enable **GitHub Pages** (Settings → Pages → Deploy from branch `main` / root) and open the Pages URL
+No install. No build.
 
-You do **not** need to unzip anything on the site itself. The game files are already in the repo:
-
-- `index.html`
-- `css/style.css`
-- `js/p0.js` … `js/p7.js` + `js/boot.js`
+1. Open `index.html` in Chrome, Firefox, Edge, or Safari.
+2. Or turn on GitHub Pages: **Settings → Pages → Deploy from branch `main` / root**.
 
 ## Controls
 
-- **A / D** — walk left and right (character faces upright, not upside down)
-- **Mouse** — aim and fire
-- **R** — reload
-- **Space** — pulse kick
-- **E** — armory after a wave
-- **1–4** — switch owned guns
+- **A / D** walk the hall (left / right only)
+- **Mouse** aim and fire
+- **R** reload
+- **Space** pulse kick
+- **E** or **B** open the armory after a wave
+- **1-4** switch guns
 
-Between waves, buy guns and patch-ups at the armory.
+Walking left mirrors the operator so they face left and stay upright. Operator and hostiles have arms and legs.
+
+## Files
+
+```
+index.html
+css/style.css
+js/e0.js ... js/e7.js
+js/boot.js
+js/ui.js
+favicon.svg
+```

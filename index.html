@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#080510">
-  <title>Null X: Dead Signal</title>
+  <meta name="theme-color" content="#0a0b0d">
+  <title>Dead Signal</title>
+  <link rel="icon" href="favicon.svg">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -13,7 +14,7 @@
       <canvas id="game" width="1280" height="720"></canvas>
       <div id="hud">
         <div id="status" class="hud-panel">
-          <div class="label">Vital Status</div>
+          <div class="label">Vitals</div>
           <div class="value">
             <span id="health-text" class="red">100</span> HP
             <span class="label" style="margin-left:13px">Score</span>
@@ -23,12 +24,12 @@
           <div class="label" style="margin-top:7px">Credits <span id="credits" class="cyan">0</span></div>
         </div>
         <div id="wave-box" class="hud-panel">
-          <div class="label">Containment Wave</div>
-          <div class="value purple">
+          <div class="label">Wave</div>
+          <div class="value">
             <span id="wave-number">0</span>
             <span style="color:var(--muted);font-size:13px"> / inf</span>
           </div>
-          <div class="label" style="margin-top:5px"><span id="enemies-left">0</span> signals detected</div>
+          <div class="label" style="margin-top:5px"><span id="enemies-left">0</span> signals</div>
         </div>
         <div id="weapon-box" class="hud-panel">
           <div class="label">
@@ -41,16 +42,11 @@
           </div>
           <div id="reload"><div id="reload-fill"></div></div>
           <div class="label" style="margin-top:7px">
-            Pulse kick: <span id="kick-status" class="good">READY</span>
+            Kick <span id="kick-status" class="good">READY</span>
           </div>
         </div>
         <div id="help" class="hud-panel">
-          MOVE <span class="cyan">A / D</span>
-          · AIM / FIRE <span class="cyan">MOUSE</span>
-          · RELOAD <span class="cyan">R</span>
-          · KICK <span class="cyan">SPACE</span>
-          · ARMORY <span class="cyan">E</span>
-          · GUNS <span class="cyan">1-4</span>
+          A/D walk the hall · Mouse aim/fire · R reload · Space kick · E armory · 1-4 guns
         </div>
         <div id="message"></div>
         <div id="rest-banner"></div>
@@ -98,13 +94,13 @@
       </div>
       <div id="menu">
         <div class="menu-card">
-          <div class="label cyan">Null X Interactive // Corridor Survival</div>
-          <h1>DEAD<br><span>SIGNAL</span></h1>
-          <p class="subtitle">
-            A 2D facility hallway. Hostiles come through the bay doors.
+          <div class="label cyan" id="menu-kicker">Null X Interactive</div>
+          <h1 id="menu-title">Dead<br><span>Signal</span></h1>
+          <p class="subtitle" id="menu-copy">
+            A 2D facility hallway. Signals come through the bay doors.
             Between waves, spend credits on guns and patch-ups at the armory.
           </p>
-          <div class="controls">
+          <div class="controls" id="menu-controls">
             <div class="control"><kbd>A</kbd> <kbd>D</kbd> walk the hall</div>
             <div class="control"><kbd>Mouse</kbd> aim and fire</div>
             <div class="control"><kbd>E</kbd> armory after a wave</div>
@@ -112,19 +108,12 @@
             <div class="control"><kbd>R</kbd> reload</div>
             <div class="control"><kbd>1</kbd>-<kbd>4</kbd> switch guns</div>
           </div>
-          <button class="primary-btn" id="start-btn" type="button">START CONTAINMENT</button>
+          <button class="primary-btn" id="start-btn" type="button">Start containment</button>
         </div>
       </div>
     </div>
   </div>
-  <script src="js/p0.js"></script>
-  <script src="js/p1.js"></script>
-  <script src="js/p2.js"></script>
-  <script src="js/p3.js"></script>
-  <script src="js/p4.js"></script>
-  <script src="js/p5.js"></script>
-  <script src="js/p6.js"></script>
-  <script src="js/p7.js"></script>
-  <script src="js/boot.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
 </body>
 </html>
