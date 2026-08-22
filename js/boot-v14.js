@@ -1,4 +1,4 @@
-// DeadSignal boot v16
+// DeadSignal boot v17 - shape characters + engine parts + ui + gore
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -23,7 +23,7 @@
           var stream = new Response(bytes).body.pipeThrough(new DecompressionStream("gzip"));
           new Response(stream).arrayBuffer().then(function (buf) {
             (0, eval)(new TextDecoder().decode(buf));
-            console.log("[DeadSignal] engine v16");
+            console.log("[DeadSignal] engine v17 shapes");
             cb && cb();
           });
         } catch (e) { console.error(e); }
@@ -38,13 +38,10 @@
     }
     next();
   }
-  var sprites = ["js/sp_gun_auto.js", "js/sp_gun_pistol.js", "js/sp_gun_rail.js", "js/sp_gun_rifle.js", "js/sp_gun_scatter.js", "js/sp_gun_smg.js", "js/sp_player.js", "js/sp_player_crouch.js", "js/sp_player_kick.js", "js/sp_zombie.js", "js/sp_zombie_brute.js", "js/sp_zombie_headless.js", "js/sp_zombie_runner.js"];
-  chain(sprites, 0, function () {
-    loadEngineParts(function () {
-      chain(["js/ui.js", "js/gore.js"], 0, function () {
-        console.log("[DeadSignal] ready v16");
-        if (window.__dsBoot) window.__dsBoot();
-      });
+  loadEngineParts(function () {
+    chain(["js/ui.js", "js/gore.js"], 0, function () {
+      console.log("[DeadSignal] ready v17");
+      if (window.__dsBoot) window.__dsBoot();
     });
   });
 })();
