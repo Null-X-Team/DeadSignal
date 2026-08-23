@@ -1,4 +1,4 @@
-// DeadSignal boot v27 — assemble engine.s0..s3
+// DeadSignal boot v27 — inflate engine from eg8_*.b64
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -17,8 +17,14 @@
     x.onerror = function () { cb(new Error("net " + src)); };
     x.send();
   }
+  function gunzipB64(b64) {
+    var bin = atob(b64);
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+  }
   var v = "20260823v27";
-  var parts = 4;
+  var parts = 11;
   var buf = "";
   var idx = 0;
   function afterEngine() {
@@ -32,18 +38,25 @@
   }
   function next() {
     if (idx >= parts) {
-      try {
-        (0, eval)(buf);
-        console.log("[DeadSignal] engine assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
-        afterEngine();
-      } catch (err) {
-        console.error("[DeadSignal] eval failed", err);
-      }
+      gunzipB64(buf.trim()).then(function (code) {
+        try {
+          (0, eval)(code);
+          console.log("[DeadSignal] engine inflated", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
+          afterEngine();
+        } catch (err) {
+          console.error("[DeadSignal] eval failed", err);
+        }
+      }).catch(function (e) {
+        console.error("[DeadSignal] inflate failed", e);
+      });
       return;
     }
-    loadText("js/engine.s" + idx + ".js?v=" + v, function (err, t) {
-      if (err) { console.error(err); return; }
-      buf += t;
+    loadText("js/eg8_" + idx + ".b64?v=" + v, function (err, t) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      buf += t.trim();
       idx++;
       next();
     });
