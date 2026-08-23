@@ -1,4 +1,4 @@
-// DeadSignal boot v18e - crouch + guns via gzip engine parts
+// DeadSignal boot v18f - crouch + guns via gzip engine parts
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -23,14 +23,14 @@
           var stream = new Response(bytes).body.pipeThrough(new DecompressionStream("gzip"));
           new Response(stream).arrayBuffer().then(function (buf) {
             (0, eval)(new TextDecoder().decode(buf));
-            console.log("[DeadSignal] engine v18e crouch+guns");
+            console.log("[DeadSignal] engine v18f crouch+guns");
             cb && cb();
           });
         } catch (e) { console.error(e); }
         return;
       }
       var xhr = new XMLHttpRequest();
-      xhr.open("GET", "js/ec" + loaded + ".b64?v=20260822v18e");
+      xhr.open("GET", "js/ec" + loaded + ".b64?v=20260822v18f");
       xhr.onload = function () {
         if (xhr.status === 200) { parts[loaded] = xhr.responseText.trim(); loaded++; next(); }
         else console.error("chunk", loaded, xhr.status);
@@ -39,10 +39,10 @@
     }
     next();
   }
-  loadScript("js/guns.js?v=20260822v18e", function () {
+  loadScript("js/guns.js?v=20260822v18f", function () {
     loadEngine(function () {
-      chain(["js/ui.js?v=20260822v18e", "js/gore.js?v=20260822v18e"], 0, function () {
-        console.log("[DeadSignal] ready v18e");
+      chain(["js/ui.js?v=20260822v18f", "js/gore.js?v=20260822v18f"], 0, function () {
+        console.log("[DeadSignal] ready v18f");
         if (window.__dsBoot) window.__dsBoot();
       });
     });
