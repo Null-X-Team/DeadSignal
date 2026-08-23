@@ -1,4 +1,4 @@
-// DeadSignal boot v20 — assemble e20_0..e20_3 + guns
+// DeadSignal boot v20 — assemble 24 engine pieces
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -17,8 +17,8 @@
     x.onerror = function () { cb(new Error("net " + src)); };
     x.send();
   }
-  var v = "20260822v20";
-  var parts = 4;
+  var v = "20260822v20b";
+  var parts = 24;
   var buf = "";
   var idx = 0;
   function next() {
@@ -38,7 +38,8 @@
       });
       return;
     }
-    loadText("js/e20_" + idx + ".js?v=" + v, function (err, t) {
+    var n = (idx < 10 ? "0" : "") + idx;
+    loadText("js/e20p_" + n + ".txt?v=" + v, function (err, t) {
       if (err) { console.error(err); return; }
       buf += t;
       idx++;
