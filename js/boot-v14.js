@@ -1,4 +1,4 @@
-// DeadSignal boot v30 — plain script load (no gzip chunks)
+// DeadSignal boot v30 — load engine as plain JS string parts
 (function () {
   var v = "20260823v30";
   function loadScript(src, cb) {
@@ -23,11 +23,18 @@
       card.appendChild(p);
     } catch (e) {}
   }
+  function loadParts(i, done) {
+    if (i >= 4) return done();
+    loadScript("js/epart" + i + ".js?v=" + v, function (err) {
+      if (err) return done(err);
+      loadParts(i + 1, done);
+    });
+  }
   loadScript("js/guns.js?v=" + v, function () {
-    loadScript("js/engine-full.js?v=" + v, function (err) {
+    loadParts(0, function (err) {
       if (err || !(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
         showBootError("Engine failed to load. Hard-refresh (Ctrl+Shift+R).");
-        console.error("[DeadSignal] engine missing after load");
+        console.error("[DeadSignal] engine missing after parts");
         return;
       }
       console.log("[DeadSignal] engine ready");
