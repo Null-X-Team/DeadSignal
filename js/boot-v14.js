@@ -1,4 +1,4 @@
-// DeadSignal boot v21 — inflate engine from egz_*.b64
+// DeadSignal boot v21 — assemble engine from e20_*.js (plain) or egz gzip
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -17,41 +17,39 @@
     x.onerror = function () { cb(new Error("net " + src)); };
     x.send();
   }
-  function gunzipB64(b64) {
-    var bin = atob(b64);
-    var bytes = new Uint8Array(bin.length);
-    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
-  }
-  var v = "20260822v21";
-  var parts = 4;
-  var buf = "";
-  var idx = 0;
-  function next() {
-    if (idx >= parts) {
-      gunzipB64(buf.trim()).then(function (code) {
-        try {
-          (0, eval)(code);
-          console.log("[DeadSignal] engine v21 inflated", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
-        } catch (err) {
-          console.error("[DeadSignal] eval failed", err);
-          return;
-        }
-        loadScript("js/ui.js?v=" + v, function () {
-          loadScript("js/gore.js?v=" + v, function () {
-            console.log("[DeadSignal] ready v21");
-            if (window.__dsBoot) window.__dsBoot();
-          });
-        });
-      }).catch(function (e) { console.error("[DeadSignal] inflate failed", e); });
-      return;
-    }
-    loadText("js/egz_" + idx + ".b64?v=" + v, function (err, t) {
-      if (err) { console.error(err); return; }
-      buf += t.trim();
-      idx++;
-      next();
+  function afterEngine() {
+    loadScript("js/ui.js?v=" + v, function () {
+      loadScript("js/gore.js?v=" + v, function () {
+        console.log("[DeadSignal] ready v21");
+        if (window.__dsBoot) window.__dsBoot();
+      });
     });
   }
-  loadScript("js/guns.js?v=" + v, next);
+  var v = "20260822v21";
+  // Prefer plain e20 pieces (no inflate)
+  var eParts = 4;
+  var eBuf = "";
+  var eIdx = 0;
+  function nextE() {
+    if (eIdx >= eParts) {
+      try {
+        (0, eval)(eBuf);
+        console.log("[DeadSignal] engine v21 assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
+        afterEngine();
+      } catch (err) {
+        console.error("[DeadSignal] assemble failed", err);
+      }
+      return;
+    }
+    loadText("js/e20_" + eIdx + ".js?v=" + v, function (err, t) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      eBuf += t;
+      eIdx++;
+      nextE();
+    });
+  }
+  loadScript("js/guns.js?v=" + v, nextE);
 })();
