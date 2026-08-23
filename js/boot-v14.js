@@ -1,4 +1,4 @@
-// DeadSignal boot v20 — assemble 24 engine pieces
+// DeadSignal boot v20 — inflate engine from egz_*.b64
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -17,31 +17,38 @@
     x.onerror = function () { cb(new Error("net " + src)); };
     x.send();
   }
-  var v = "20260822v20b";
-  var parts = 24;
+  function gunzipB64(b64) {
+    var bin = atob(b64);
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+  }
+  var v = "20260822v20c";
+  var parts = 4;
   var buf = "";
   var idx = 0;
   function next() {
     if (idx >= parts) {
-      try {
-        (0, eval)(buf);
-        console.log("[DeadSignal] engine v20 assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
-      } catch (err) {
-        console.error("[DeadSignal] eval failed", err);
-        return;
-      }
-      loadScript("js/ui.js?v=" + v, function () {
-        loadScript("js/gore.js?v=" + v, function () {
-          console.log("[DeadSignal] ready v20");
-          if (window.__dsBoot) window.__dsBoot();
+      gunzipB64(buf.trim()).then(function (code) {
+        try {
+          (0, eval)(code);
+          console.log("[DeadSignal] engine v20 inflated", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
+        } catch (err) {
+          console.error("[DeadSignal] eval failed", err);
+          return;
+        }
+        loadScript("js/ui.js?v=" + v, function () {
+          loadScript("js/gore.js?v=" + v, function () {
+            console.log("[DeadSignal] ready v20");
+            if (window.__dsBoot) window.__dsBoot();
+          });
         });
-      });
+      }).catch(function (e) { console.error("[DeadSignal] inflate failed", e); });
       return;
     }
-    var n = (idx < 10 ? "0" : "") + idx;
-    loadText("js/e20p_" + n + ".txt?v=" + v, function (err, t) {
+    loadText("js/egz_" + idx + ".b64?v=" + v, function (err, t) {
       if (err) { console.error(err); return; }
-      buf += t;
+      buf += t.trim();
       idx++;
       next();
     });
