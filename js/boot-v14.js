@@ -1,4 +1,4 @@
-// DeadSignal boot v19c — inflate engine from ep*.b64 + guns
+// DeadSignal boot v19d — load known-good engine + hatchet overlay
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -7,51 +7,21 @@
     s.onerror = function () { console.error("[DeadSignal] fail", src); cb && cb(); };
     document.head.appendChild(s);
   }
-  function loadText(src, cb) {
-    var x = new XMLHttpRequest();
-    x.open("GET", src);
-    x.onload = function () {
-      if (x.status === 200) cb(null, x.responseText);
-      else cb(new Error("HTTP " + x.status + " " + src));
-    };
-    x.onerror = function () { cb(new Error("net " + src)); };
-    x.send();
-  }
-  function gunzipB64(b64) {
-    var bin = atob(b64);
-    var bytes = new Uint8Array(bin.length);
-    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
-  }
-  var v = "20260822v19c";
-  var parts = 4;
-  var buf = "";
-  var idx = 0;
-  function next() {
-    if (idx >= parts) {
-      gunzipB64(buf).then(function (code) {
-        try {
-          (0, eval)(code);
-          console.log("[DeadSignal] engine v19 inflated", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
-        } catch (err) {
-          console.error("[DeadSignal] eval failed", err);
-          return;
-        }
+  var v = "20260822v19d";
+  // known-good engine (startRun + pulseKick) via jsDelivr CDN
+  var engineSrc =
+    "https://cdn.jsdelivr.net/gh/Null-X-Team/DeadSignal@7b42a50c3017e8cd8dab0df72cff7b0895efd0a4/js/engine.js";
+  loadScript("js/guns.js?v=" + v, function () {
+    loadScript(engineSrc, function () {
+      console.log("[DeadSignal] engine loaded", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
+      loadScript("js/hatchet.js?v=" + v, function () {
         loadScript("js/ui.js?v=" + v, function () {
           loadScript("js/gore.js?v=" + v, function () {
-            console.log("[DeadSignal] ready v19");
+            console.log("[DeadSignal] ready v19d");
             if (window.__dsBoot) window.__dsBoot();
           });
         });
-      }).catch(function (e) { console.error("[DeadSignal] inflate failed", e); });
-      return;
-    }
-    loadText("js/ep" + idx + ".b64?v=" + v, function (err, t) {
-      if (err) { console.error(err); return; }
-      buf += t.trim();
-      idx++;
-      next();
+      });
     });
-  }
-  loadScript("js/guns.js?v=" + v, next);
+  });
 })();
