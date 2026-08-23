@@ -1,33 +1,18 @@
-// DeadSignal — drop your gun images here
-// Option A: point at image URLs (PNG/WebP recommended, ~64x32 or similar)
-// Option B: paste data:image/png;base64,... strings
-//
-// Example:
-//   window.DS_GUNS = {
-//     pistol:  load("img/guns/pistol.png"),
-//     scatter: load("img/guns/scatter.png"),
-//     smg:     load("img/guns/smg.png"),
-//     rifle:   load("img/guns/rifle.png"),
-//     auto:    load("img/guns/auto.png"),
-//     rail:    load("img/guns/rail.png"),
-//   };
-//
-// Keys must match weapon ids: pistol, scatter, smg, rifle, auto, rail
-
+// DeadSignal — your gun images from /imgs
+// Glock → pistol, pump → scatter (shotgun). Add more later.
 (function () {
   function load(src) {
     var img = new Image();
     img.src = src;
     return img;
   }
-  // Leave empty until you add art — game uses procedural guns as fallback
-  window.DS_GUNS = window.DS_GUNS || {
-    // pistol:  load("img/guns/pistol.png"),
-    // scatter: load("img/guns/scatter.png"),
-    // smg:     load("img/guns/smg.png"),
-    // rifle:   load("img/guns/rifle.png"),
-    // auto:    load("img/guns/auto.png"),
-    // rail:    load("img/guns/rail.png"),
+  window.DS_GUNS = {
+    pistol: load("imgs/Glock.png"),
+    scatter: load("imgs/pump.png")
+    // smg: load("imgs/your-smg.png"),
+    // rail: load("imgs/your-rail.png"),
   };
-  console.log("[DeadSignal] guns.js loaded", Object.keys(window.DS_GUNS));
+  // Hatchet available later for melee/kick skin:
+  // window.DS_HATCHET = load("imgs/Hatchet.png");
+  console.log("[DeadSignal] guns loaded", Object.keys(window.DS_GUNS));
 })();
