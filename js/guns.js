@@ -81,6 +81,7 @@
   // M249 SAW / LMG
   loadFirst(["imgs/LMG.png", "imgs/lmg.png"], function (img) {
     window.DS_GUNS.auto = img;
+    window.DS_GUNS.lmg = img;
   });
 
   // Lever action (marksman)
