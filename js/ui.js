@@ -2,6 +2,13 @@
   var Engine = window.DeadSignalGame && window.DeadSignalGame.Engine;
   if (!Engine) {
     console.error("Dead Signal engine failed to load");
+    var m = document.getElementById("menu");
+    if (m) {
+      var p = document.createElement("p");
+      p.style.color = "#ff6a5a";
+      p.textContent = "Engine failed to load. Hard-refresh (Ctrl+Shift+R).";
+      m.querySelector(".menu-card") && m.querySelector(".menu-card").appendChild(p);
+    }
     return;
   }
 
@@ -22,26 +29,36 @@
   var lastHud = null;
   var lastPush = 0;
 
-  var engine = new Engine(
-    canvas,
-    function (hud) {
-      var now = performance.now();
-      if (
-        now - lastPush < 80 &&
-        lastHud &&
-        lastHud.phase === hud.phase &&
-        lastHud.shopOpen === hud.shopOpen &&
-        lastHud.message === hud.message
-      ) {
-        paintFast(hud);
-        return;
-      }
-      lastPush = now;
-      lastHud = hud;
-      paintHud(hud);
-    },
-    function () {}
-  );
+  var engine;
+  try {
+    engine = new Engine(
+      canvas,
+      function (hud) {
+        try {
+          var now = performance.now();
+          if (
+            now - lastPush < 80 &&
+            lastHud &&
+            lastHud.phase === hud.phase &&
+            lastHud.shopOpen === hud.shopOpen &&
+            lastHud.message === hud.message
+          ) {
+            paintFast(hud);
+            return;
+          }
+          lastPush = now;
+          lastHud = hud;
+          paintHud(hud);
+        } catch (err) {
+          console.error("hud paint", err);
+        }
+      },
+      function () {}
+    );
+  } catch (err) {
+    console.error("Engine init failed", err);
+    return;
+  }
 
   function paintFast(hud) {
     setText("health-text", String(Math.ceil(hud.hp)));
@@ -57,7 +74,7 @@
     var reload = document.getElementById("reload-fill");
     if (reload) reload.style.width = hud.reloadT * 100 + "%";
     setText("kick-status", hud.kickT > 0 ? hud.kickT.toFixed(1) + "s" : "READY");
-    if (hud.phase === "intermission") {
+    if (hud.phase === "intermission" && restBanner) {
       restBanner.textContent =
         "Armory open · " + Math.max(0, Math.ceil(hud.rest)) + "s until next wave";
     }
@@ -69,35 +86,40 @@
     setText("weapon-slot", "[" + hud.slot + "]");
 
     var playing = hud.phase === "combat" || hud.phase === "intermission" || hud.phase === "dying";
-    document.getElementById("hud").style.display = playing || hud.phase === "dying" ? "block" : "none";
-    canvas.style.cursor = playing ? "crosshair" : "default";
+    var hudRoot = document.getElementById("hud");
+    if (hudRoot) hudRoot.style.display = playing || hud.phase === "dying" ? "block" : "none";
+    if (canvas) canvas.style.cursor = playing ? "crosshair" : "default";
 
-    if (hud.message) {
-      messageEl.textContent = hud.message;
-      messageEl.classList.add("show");
-    } else {
-      messageEl.classList.remove("show");
+    if (messageEl) {
+      if (hud.message) {
+        messageEl.textContent = hud.message;
+        messageEl.classList.add("show");
+      } else {
+        messageEl.classList.remove("show");
+      }
     }
 
     if (hud.phase === "intermission") {
-      restBanner.classList.add("show");
-      restBanner.textContent =
-        "Armory open · " + Math.max(0, Math.ceil(hud.rest)) + "s until next wave";
-      openArmory.classList.toggle("show", !hud.shopOpen);
+      if (restBanner) {
+        restBanner.classList.add("show");
+        restBanner.textContent =
+          "Armory open · " + Math.max(0, Math.ceil(hud.rest)) + "s until next wave";
+      }
+      if (openArmory) openArmory.classList.toggle("show", !hud.shopOpen);
     } else {
-      restBanner.classList.remove("show");
-      openArmory.classList.remove("show");
+      if (restBanner) restBanner.classList.remove("show");
+      if (openArmory) openArmory.classList.remove("show");
     }
 
-    shopEl.classList.toggle("hidden", !hud.shopOpen);
+    if (shopEl) shopEl.classList.toggle("hidden", !hud.shopOpen);
     if (hud.shopOpen) renderShop(hud);
 
     if (hud.phase === "menu" || hud.phase === "dead") {
-      menu.classList.remove("hidden");
+      if (menu) menu.classList.remove("hidden");
       if (hud.phase === "dead") {
-        menuKicker.textContent = "Containment failed";
-        menuTitle.innerHTML = "Signal<br><span>lost</span>";
-        menuCopy.textContent =
+        if (menuKicker) menuKicker.textContent = "Containment failed";
+        if (menuTitle) menuTitle.innerHTML = "Signal<br><span>lost</span>";
+        if (menuCopy) menuCopy.textContent =
           "The signals dragged you under. You held " +
           hud.wave +
           " wave" +
@@ -107,22 +129,23 @@
           " points. Best " +
           hud.highScore +
           ".";
-        menuControls.style.display = "none";
-        startBtn.textContent = "Restart containment";
+        if (menuControls) menuControls.style.display = "none";
+        if (startBtn) startBtn.textContent = "Restart containment";
       } else {
-        menuKicker.textContent = "Null X Interactive";
-        menuTitle.innerHTML = "Dead<br><span>Signal</span>";
-        menuCopy.textContent =
+        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v18";
+        if (menuTitle) menuTitle.innerHTML = "Dead<br><span>Signal</span>";
+        if (menuCopy) menuCopy.textContent =
           "A 2D facility hallway. Signals come through the bay doors. Between waves, spend credits on guns and patch-ups at the armory.";
-        menuControls.style.display = "";
-        startBtn.textContent = "Start containment";
+        if (menuControls) menuControls.style.display = "";
+        if (startBtn) startBtn.textContent = "Begin transmission";
       }
     } else {
-      menu.classList.add("hidden");
+      if (menu) menu.classList.add("hidden");
     }
   }
 
   function renderShop(hud) {
+    if (!shopList) return;
     var items = engine.shopItems();
     shopList.innerHTML = "";
     items.forEach(function (item) {
@@ -149,7 +172,7 @@
       btn.disabled = owned || hud.credits < item.cost;
       btn.textContent = owned ? "Owned" : item.cost + " cr";
       btn.addEventListener("click", function () {
-        shopNote.textContent = engine.buy(item);
+        if (shopNote) shopNote.textContent = engine.buy(item);
         engine.pushHud();
       });
       li.appendChild(btn);
@@ -162,21 +185,26 @@
     if (el) el.textContent = value;
   }
 
-  startBtn.addEventListener("click", function () {
-    engine.startRun();
-  });
-  document.getElementById("close-shop").addEventListener("click", function () {
+  if (startBtn) {
+    startBtn.addEventListener("click", function () {
+      try { engine.startRun(); } catch (e) { console.error(e); }
+    });
+  }
+  var closeShop = document.getElementById("close-shop");
+  if (closeShop) closeShop.addEventListener("click", function () {
     engine.closeShop();
   });
-  document.getElementById("next-wave").addEventListener("click", function () {
+  var nextWave = document.getElementById("next-wave");
+  if (nextWave) nextWave.addEventListener("click", function () {
     engine.continueWaves();
   });
-  openArmory.addEventListener("click", function () {
+  if (openArmory) openArmory.addEventListener("click", function () {
     engine.toggleShop();
   });
 
   function hold(id, code) {
     var el = document.getElementById(id);
+    if (!el) return;
     var on = function (e) {
       e.preventDefault();
       engine.holdKey(code, true);
@@ -191,15 +219,18 @@
   }
   hold("left-btn", "KeyA");
   hold("right-btn", "KeyD");
-  document.getElementById("kick-btn").addEventListener("pointerdown", function (e) {
+  var kickBtn = document.getElementById("kick-btn");
+  if (kickBtn) kickBtn.addEventListener("pointerdown", function (e) {
     e.preventDefault();
     engine.pulseKick();
   });
-  document.getElementById("reload-btn").addEventListener("pointerdown", function (e) {
+  var reloadBtn = document.getElementById("reload-btn");
+  if (reloadBtn) reloadBtn.addEventListener("pointerdown", function (e) {
     e.preventDefault();
     engine.beginReload();
   });
-  document.getElementById("shop-btn").addEventListener("pointerdown", function (e) {
+  var shopBtn = document.getElementById("shop-btn");
+  if (shopBtn) shopBtn.addEventListener("pointerdown", function (e) {
     e.preventDefault();
     engine.toggleShop();
   });
