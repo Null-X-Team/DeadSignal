@@ -1,4 +1,4 @@
-// DeadSignal boot v19b — inflate engine from ep*.b64 + guns
+// DeadSignal boot v19c — inflate engine from ep*.b64 + guns
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -23,8 +23,8 @@
     for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
   }
-  var v = "20260822v19b";
-  var parts = 2;
+  var v = "20260822v19c";
+  var parts = 4;
   var buf = "";
   var idx = 0;
   function next() {
