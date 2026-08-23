@@ -292,3 +292,30 @@ kbd {
   .controls { grid-template-columns: 1fr; }
   .menu-card, .shop-card { padding: 24px 20px; }
 }
+
+/* v20 shop stats panel */
+.shop-card-wide { max-width: 920px; width: min(920px, 100%); }
+.shop-body { display: flex; gap: 16px; align-items: flex-start; margin-top: 12px; }
+.shop-stats {
+  flex: 0 0 200px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(126,232,212,0.25);
+  border-radius: 8px;
+  padding: 12px 14px;
+  min-height: 180px;
+}
+.shop-stats .stat-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: #c8cdd8;
+}
+.shop-stats .stat-row span:last-child { color: #7ee8d4; font-variant-numeric: tabular-nums; }
+.shop-list { flex: 1; max-height: 360px; overflow-y: auto; }
+@media (max-width: 720px) {
+  .shop-body { flex-direction: column; }
+  .shop-stats { flex: 1 1 auto; width: 100%; }
+}
