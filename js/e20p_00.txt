@@ -1,0 +1,67 @@
+window.DeadSignalGame = (() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
+  // src/game/engine.ts
+  var engine_exports = {};
+  __export(engine_exports, {
+    Engine: () => Engine
+  });
+
+  // src/game/catalog.ts
+  var VIEW_W = 1280;
+  var VIEW_H = 720;
+  var WORLD_W = 2920;
+  var FLOOR_Y = 548;
+  var WALL_Y = 118;
+  var WEAPONS = [
+    {
+      id: "pistol",
+      name: "Pulse Pistol",
+      slot: "1",
+      mag: 12,
+      reserveStart: 72,
+      damage: 34,
+      fireRate: 0.21,
+      reload: 0.92,
+      speed: 1240,
+      pellets: 1,
+      spread: 0.022,
+      color: "#7ee8d4",
+      recoil: 3,
+      cost: 0,
+      kind: "gun",
+      hold: "pistol",
+      reloadAnim: "mag"
+    },
+    {
+      id: "scatter",
+      name: "Scatter Blaster",
+      slot: "2",
+      mag: 6,
+      reserveStart: 30,
+      damage: 18,
+      fireRate: 0.58,
+      reload: 1.28,
+      speed: 980,
+      pellets: 6,
+      spread: 0.22,
+      color: "#d6dde8",
+  
