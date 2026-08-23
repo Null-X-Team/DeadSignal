@@ -1,4 +1,4 @@
-// DeadSignal boot v30f — assemble engine from epj_0..19
+// DeadSignal boot v30f — assemble engine from epb_0..19 (urlsafe b64)
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -22,6 +22,16 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
+  function b64urlToStr(s) {
+    s = s.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+    var bin = atob(s);
+    try {
+      return decodeURIComponent(escape(bin));
+    } catch (e) {
+      return bin;
+    }
+  }
   var v = "20260823v30f";
   var parts = 20;
   var idx = 0;
@@ -41,7 +51,9 @@
   function next() {
     if (idx >= parts) {
       try {
-        var code = (window.__DS_EP || []).join("");
+        var arr = window.__DS_EP || [];
+        var code = "";
+        for (var i = 0; i < arr.length; i++) code += b64urlToStr(arr[i] || "");
         (0, eval)(code);
         console.log("[DeadSignal] engine assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
         afterEngine();
@@ -51,7 +63,7 @@
       }
       return;
     }
-    loadScript("js/epj_" + idx + ".js?v=" + v, function () {
+    loadScript("js/epb_" + idx + ".js?v=" + v, function () {
       idx++;
       next();
     });
