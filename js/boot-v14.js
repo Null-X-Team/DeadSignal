@@ -39,7 +39,7 @@
       }
     } catch (e) {}
   }
-  var v = "20260823v30b";
+  var v = "20260823v30c";
   var parts = 11;
   var buf = "";
   var idx = 0;
@@ -51,7 +51,7 @@
     loadScript("js/ui.js?v=" + v, function () {
       loadScript("js/gore.js?v=" + v, function () {
         loadScript("js/patch-v22.js?v=" + v, function () {
-          console.log("[DeadSignal] ready v30");
+          console.log("[DeadSignal] ready v30c");
         });
       });
     });
@@ -65,6 +65,7 @@
           afterEngine();
         } catch (err) {
           console.error("[DeadSignal] eval failed", err);
+          showBootError("Engine eval failed. Hard-refresh (Ctrl+Shift+R).");
         }
       }).catch(function (e) {
         console.error("[DeadSignal] inflate failed", e);
