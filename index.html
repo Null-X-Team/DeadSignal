@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0a0b0d">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>Dead Signal v18</title>
-  <link rel="stylesheet" href="css/style.css?v=20260822v18e">
+  <link rel="stylesheet" href="css/style.css?v=20260822v18f">
   <style>
     #build-tag {
       position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
@@ -20,7 +20,7 @@
 <body>
   <div id="app">
     <div id="game-shell">
-      <div id="build-tag">BUILD v18e — crouch + your guns</div>
+      <div id="build-tag">BUILD v18f — crouch + your guns</div>
       <canvas id="game" width="1280" height="720"></canvas>
       <div id="hud">
         <div id="status" class="hud-panel">
@@ -79,34 +79,38 @@
           <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 20V12h6v8" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
         </button>
       </div>
-      <div id="shop" class="hidden">
-        <div class="shop-card">
-          <div class="shop-head">
-            <div>
-              <div class="label cyan">Facility armory</div>
-              <h2>Supply rack</h2>
-              <p class="subtitle" style="margin:8px 0 0">
-                Credits <span id="shop-credits">0</span>. Guns unlock to slots 2-4. Patch-ups seal vitals.
-              </p>
-            </div>
-            <button id="close-shop" class="ghost-btn" type="button">Close</button>
-          </div>
-          <ul id="shop-list" class="shop-list"></ul>
-          <p id="shop-note"></p>
-          <button id="next-wave" class="primary-btn" type="button">Next wave</button>
-        </div>
+    </div>
+
+    <div id="menu" class="overlay">
+      <div class="panel">
+        <div class="brand">DEAD SIGNAL</div>
+        <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v18f</div>
+        <h1 id="menu-title">Facility Breach</h1>
+        <p id="menu-copy">Hold the hallway. Signals come through the bay doors.</p>
+        <p class="hint">A/D move · Ctrl crouch · mouse aim · click fire · R reload · Space kick · E shop</p>
+        <div id="menu-controls" class="controls-grid"></div>
+        <button id="start-btn" class="primary-btn" type="button">Begin transmission</button>
       </div>
-      <div id="menu">
-        <div class="menu-card">
-          <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v18e</div>
-          <h1>DEAD SIGNAL</h1>
-          <p class="subtitle">Hallway clear. Doors open. Signals incoming.</p>
-          <button id="start-btn" class="primary-btn" type="button">Begin transmission</button>
-          <p class="hint">A/D move · Ctrl crouch · mouse aim · click fire · R reload · Space kick · E shop</p>
-        </div>
+    </div>
+
+    <div id="shop" class="overlay hidden">
+      <div class="panel wide">
+        <div class="brand">ARMORY</div>
+        <p class="hint">Credits <span id="shop-credits">0</span>. Guns unlock to slots 2-4. Patch-ups seal vitals.</p>
+        <div id="shop-grid" class="shop-grid"></div>
+        <button id="close-shop" class="primary-btn" type="button">Close armory</button>
+      </div>
+    </div>
+
+    <div id="gameover" class="overlay hidden">
+      <div class="panel">
+        <div class="brand">SIGNAL LOST</div>
+        <h1 id="go-title">You were consumed</h1>
+        <p id="go-stats"></p>
+        <button id="retry-btn" class="primary-btn" type="button">Reboot run</button>
       </div>
     </div>
   </div>
-  <script src="js/boot-v14.js?v=20260822v18e"></script>
+  <script src="js/boot-v14.js?v=20260822v18f"></script>
 </body>
 </html>
