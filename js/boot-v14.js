@@ -1,4 +1,4 @@
-// DeadSignal boot v19b — assemble engine.p1+p2 + guns (reliable start)
+// DeadSignal boot v19b — inflate engine from ep*.b64 + guns
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -17,15 +17,22 @@
     x.onerror = function () { cb(new Error("net " + src)); };
     x.send();
   }
+  function gunzipB64(b64) {
+    var bin = atob(b64);
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+  }
   var v = "20260822v19b";
-  loadScript("js/guns.js?v=" + v, function () {
-    loadText("js/engine.p1.js?v=" + v, function (e1, a) {
-      if (e1) { console.error(e1); return; }
-      loadText("js/engine.p2.js?v=" + v, function (e2, b) {
-        if (e2) { console.error(e2); return; }
+  var parts = 2;
+  var buf = "";
+  var idx = 0;
+  function next() {
+    if (idx >= parts) {
+      gunzipB64(buf).then(function (code) {
         try {
-          (0, eval)(a + b);
-          console.log("[DeadSignal] engine v19 assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
+          (0, eval)(code);
+          console.log("[DeadSignal] engine v19 inflated", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
         } catch (err) {
           console.error("[DeadSignal] eval failed", err);
           return;
@@ -36,7 +43,15 @@
             if (window.__dsBoot) window.__dsBoot();
           });
         });
-      });
+      }).catch(function (e) { console.error("[DeadSignal] inflate failed", e); });
+      return;
+    }
+    loadText("js/ep" + idx + ".b64?v=" + v, function (err, t) {
+      if (err) { console.error(err); return; }
+      buf += t.trim();
+      idx++;
+      next();
     });
-  });
+  }
+  loadScript("js/guns.js?v=" + v, next);
 })();
