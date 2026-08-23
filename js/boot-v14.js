@@ -1,4 +1,4 @@
-// DeadSignal boot v30f — assemble engine from epj_0..7 (JSON-safe)
+// DeadSignal boot v30f — assemble engine from epj_0..19
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -23,7 +23,7 @@
     } catch (e) {}
   }
   var v = "20260823v30f";
-  var parts = 8;
+  var parts = 20;
   var idx = 0;
   function afterEngine() {
     if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
