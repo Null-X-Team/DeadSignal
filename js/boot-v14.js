@@ -1,4 +1,4 @@
-// DeadSignal boot v30e — load engine.js directly (stable)
+// DeadSignal boot v30e — load engine from epack parts
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -22,6 +22,8 @@
     } catch (e) {}
   }
   var v = "20260823v30e";
+  var parts = 4;
+  var idx = 0;
   function afterEngine() {
     if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
       showBootError("Engine failed to load. Hard-refresh (Ctrl+Shift+R).");
@@ -35,10 +37,23 @@
       });
     });
   }
-  loadScript("js/guns.js?v=" + v, function () {
-    loadScript("js/engine.js?v=" + v, function () {
-      console.log("[DeadSignal] engine loaded", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
-      afterEngine();
+  function next() {
+    if (idx >= parts) {
+      try {
+        var code = (window.__DS_EP || []).join("");
+        (0, eval)(code);
+        console.log("[DeadSignal] engine assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
+        afterEngine();
+      } catch (err) {
+        console.error("[DeadSignal] eval failed", err);
+        showBootError("Engine eval failed. Hard-refresh.");
+      }
+      return;
+    }
+    loadScript("js/epack_" + idx + ".js?v=" + v, function () {
+      idx++;
+      next();
     });
-  });
+  }
+  loadScript("js/guns.js?v=" + v, next);
 })();
