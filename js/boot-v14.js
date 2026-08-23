@@ -1,10 +1,10 @@
-// DeadSignal boot v17 - shape characters + engine parts + ui + gore
+// DeadSignal boot v18 - classic characters + engine parts + ui + gore + optional guns
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
-    s.src = src + "?v=" + Date.now();
+    s.src = src + (src.indexOf("?") >= 0 ? "" : ("?v=" + Date.now()));
     s.onload = function () { cb && cb(); };
-    s.onerror = function () { console.error("fail", src); };
+    s.onerror = function () { console.error("fail", src); cb && cb(); };
     document.head.appendChild(s);
   }
   function chain(list, i, done) {
@@ -23,25 +23,30 @@
           var stream = new Response(bytes).body.pipeThrough(new DecompressionStream("gzip"));
           new Response(stream).arrayBuffer().then(function (buf) {
             (0, eval)(new TextDecoder().decode(buf));
-            console.log("[DeadSignal] engine v17 shapes");
+            console.log("[DeadSignal] engine v18 classic");
             cb && cb();
           });
         } catch (e) { console.error(e); }
         return;
       }
       var xhr = new XMLHttpRequest();
-      xhr.open("GET", "js/e" + loaded + ".b64?v=" + Date.now());
+      xhr.open("GET", "js/e" + loaded + ".b64?v=20260822v18a");
       xhr.onload = function () {
         if (xhr.status === 200) { parts[loaded] = xhr.responseText.trim(); loaded++; next(); }
+        else { console.error("chunk fail", loaded); }
       };
+      xhr.onerror = function () { console.error("chunk net", loaded); };
       xhr.send();
     }
     next();
   }
-  loadEngineParts(function () {
-    chain(["js/ui.js", "js/gore.js"], 0, function () {
-      console.log("[DeadSignal] ready v17");
-      if (window.__dsBoot) window.__dsBoot();
+  // Load optional guns.js first (sets window.DS_GUNS), then engine, then ui/gore
+  loadScript("js/guns.js?v=20260822v18a", function () {
+    loadEngineParts(function () {
+      chain(["js/ui.js?v=20260822v18a", "js/gore.js?v=20260822v18a"], 0, function () {
+        console.log("[DeadSignal] ready v18");
+        if (window.__dsBoot) window.__dsBoot();
+      });
     });
   });
 })();
