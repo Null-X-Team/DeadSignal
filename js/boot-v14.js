@@ -39,7 +39,7 @@
       }
     } catch (e) {}
   }
-  var v = "20260823v30";
+  var v = "20260823v30b";
   var parts = 11;
   var buf = "";
   var idx = 0;
@@ -65,7 +65,6 @@
           afterEngine();
         } catch (err) {
           console.error("[DeadSignal] eval failed", err);
-          showBootError("Engine eval failed. Hard-refresh (Ctrl+Shift+R).");
         }
       }).catch(function (e) {
         console.error("[DeadSignal] inflate failed", e);
