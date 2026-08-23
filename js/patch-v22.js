@@ -1,4 +1,4 @@
-// DeadSignal v22 runtime patches: weapon swap by slot + gun flip + safe fallback art
+// DeadSignal v23 runtime patches: weapon swap by slot + safe weapon() + no double-flip
 (function () {
   function apply() {
     var Eng = window.DeadSignalGame && window.DeadSignalGame.Engine;
@@ -32,43 +32,38 @@
       this.say(next.name.toUpperCase(), 0.65);
     };
 
-    // Never return undefined weapon
+    // Never return undefined weapon — always an owned gun (or first entry)
     proto.weapon = function () {
       var w = this.weapons[this.weaponIndex];
-      if (w) return w;
+      if (w && w.owned) return w;
       for (var i = 0; i < this.weapons.length; i++) {
         if (this.weapons[i].owned) {
           this.weaponIndex = i;
           return this.weapons[i];
         }
       }
+      this.weaponIndex = 0;
       return this.weapons[0];
     };
 
-    // Flip gun art that faces left (Glock etc.) when drawing
-    if (!window.__dsFlipHook) {
-      window.__dsFlipHook = true;
-      var _di = CanvasRenderingContext2D.prototype.drawImage;
-      CanvasRenderingContext2D.prototype.drawImage = function () {
-        var img = arguments[0];
-        var should = false;
-        if (img && window.DS_GUNS) {
-          var g = window.DS_GUNS;
-          if (img === g.pistol || img === g.smg || img === g.rail || img === g.burst || img === g.nailer || img === g.plasma) should = true;
+    // After buy, force equip so swap always works even if image missing
+    var _buy = proto.buy;
+    proto.buy = function (item) {
+      var note = _buy.call(this, item);
+      if (item && item.kind === "gun" && item.weaponId) {
+        var ni = this.weapons.findIndex(function (x) { return x.id === item.weaponId; });
+        if (ni >= 0 && this.weapons[ni].owned) {
+          this.weaponIndex = ni;
+          this.player.reload = 0;
         }
-        if (should && arguments.length === 5) {
-          var sx = arguments[1], sy = arguments[2], sw = arguments[3], sh = arguments[4];
-          this.save();
-          this.translate(sx + sw, sy);
-          this.scale(-1, 1);
-          _di.call(this, img, 0, 0, sw, sh);
-          this.restore();
-          return;
-        }
-        return _di.apply(this, arguments);
-      };
-    }
-    console.log("[DeadSignal] patch-v22 applied");
+      }
+      return note;
+    };
+
+    // NOTE: Do NOT hook Canvas drawImage. Engine already flips via DS_GUN_FLIP.
+    // A global hook was double-flipping the Glock (and any shared Image objects).
+
+    console.log("[DeadSignal] patch-v23 applied");
   }
   apply();
 })();
