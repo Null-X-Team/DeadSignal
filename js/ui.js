@@ -132,7 +132,7 @@
         if (menuControls) menuControls.style.display = "none";
         if (startBtn) startBtn.textContent = "Restart containment";
       } else {
-        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v18";
+        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v20";
         if (menuTitle) menuTitle.innerHTML = "Dead<br><span>Signal</span>";
         if (menuCopy) menuCopy.textContent =
           "A 2D facility hallway. Signals come through the bay doors. Between waves, spend credits on guns and patch-ups at the armory.";
@@ -144,10 +144,53 @@
     }
   }
 
+  function weaponStats(weaponId) {
+    if (!engine || !engine.weapons) return null;
+    for (var i = 0; i < engine.weapons.length; i++) {
+      if (engine.weapons[i].id === weaponId) return engine.weapons[i];
+    }
+    return null;
+  }
+
+  function showStats(item) {
+    var panel = document.getElementById("shop-stats");
+    if (!panel) return;
+    if (!item) {
+      panel.innerHTML = '<div class="label cyan">Inspect</div><p class="subtitle">Hover a weapon for stats.</p>';
+      return;
+    }
+    if (item.kind !== "gun" || !item.weaponId) {
+      panel.innerHTML =
+        '<div class="label cyan">' + item.name + '</div>' +
+        '<p class="subtitle">' + (item.blurb || "") + '</p>' +
+        '<div class="stat-row"><span>Type</span><span>' + (item.kind || "utility").toUpperCase() + '</span></div>' +
+        '<div class="stat-row"><span>Cost</span><span>' + item.cost + ' cr</span></div>';
+      return;
+    }
+    var w = weaponStats(item.weaponId);
+    if (!w) {
+      panel.innerHTML = '<div class="label cyan">' + item.name + '</div><p class="subtitle">' + (item.blurb || "") + '</p>';
+      return;
+    }
+    var type = w.melee ? "MELEE" : (w.kind || "gun").toUpperCase();
+    var rpm = w.fireRate > 0 ? (60 / w.fireRate).toFixed(0) + " rpm" : "—";
+    panel.innerHTML =
+      '<div class="label cyan">' + w.name + '</div>' +
+      '<p class="subtitle">' + (item.blurb || "") + '</p>' +
+      '<div class="stat-row"><span>Type</span><span>' + type + '</span></div>' +
+      '<div class="stat-row"><span>Damage</span><span>' + w.damage + (w.pellets > 1 ? " x" + w.pellets : "") + '</span></div>' +
+      '<div class="stat-row"><span>Fire rate</span><span>' + rpm + '</span></div>' +
+      '<div class="stat-row"><span>Mag</span><span>' + (w.melee ? "—" : w.mag) + '</span></div>' +
+      '<div class="stat-row"><span>Reload</span><span>' + (w.melee ? "—" : w.reload.toFixed(2) + "s") + '</span></div>' +
+      '<div class="stat-row"><span>Slot</span><span>' + w.slot + '</span></div>' +
+      '<div class="stat-row"><span>Cost</span><span>' + item.cost + ' cr</span></div>';
+  }
+
   function renderShop(hud) {
     if (!shopList) return;
     var items = engine.shopItems();
     shopList.innerHTML = "";
+    showStats(null);
     items.forEach(function (item) {
       var owned = item.kind === "gun" && item.weaponId ? hud.owned[item.weaponId] : false;
       var li = document.createElement("li");
@@ -175,6 +218,8 @@
         if (shopNote) shopNote.textContent = engine.buy(item);
         engine.pushHud();
       });
+      li.addEventListener("mouseenter", function () { showStats(item); });
+      li.addEventListener("mouseleave", function () { showStats(null); });
       li.appendChild(btn);
       shopList.appendChild(li);
     });
