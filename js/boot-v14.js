@@ -1,4 +1,4 @@
-// DeadSignal boot v30f2 — assemble engine from eng_0..2 (plain JS string chunks)
+// DeadSignal boot v30f — assemble engine from epb_0..19 (urlsafe b64)
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -22,8 +22,18 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
+  function b64urlToStr(s) {
+    s = s.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+    var bin = atob(s);
+    try {
+      return decodeURIComponent(escape(bin));
+    } catch (e) {
+      return bin;
+    }
+  }
   var v = "20260823v30f2";
-  var parts = 3;
+  var parts = 20;
   var idx = 0;
   function afterEngine() {
     if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
@@ -41,11 +51,11 @@
   function next() {
     if (idx >= parts) {
       try {
-        var arr = window.__DS_E || [];
+        var arr = window.__DS_EP || [];
         var code = "";
-        for (var i = 0; i < arr.length; i++) code += arr[i] || "";
+        for (var i = 0; i < arr.length; i++) code += b64urlToStr(arr[i] || "");
         (0, eval)(code);
-        console.log("[DeadSignal] engine assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine), code.length);
+        console.log("[DeadSignal] engine assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
         afterEngine();
       } catch (err) {
         console.error("[DeadSignal] eval failed", err);
@@ -53,7 +63,7 @@
       }
       return;
     }
-    loadScript("js/eng_" + idx + ".js?v=" + v, function () {
+    loadScript("js/epb_" + idx + ".js?v=" + v, function () {
       idx++;
       next();
     });
