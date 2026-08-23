@@ -1,4 +1,4 @@
-// DeadSignal boot v21 — assemble engine from e20_*.js (plain) or egz gzip
+// DeadSignal boot v21 — assemble engine from e21_*.js
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -26,8 +26,7 @@
     });
   }
   var v = "20260822v21";
-  // Prefer plain e20 pieces (no inflate)
-  var eParts = 4;
+  var eParts = 8;
   var eBuf = "";
   var eIdx = 0;
   function nextE() {
@@ -41,11 +40,8 @@
       }
       return;
     }
-    loadText("js/e20_" + eIdx + ".js?v=" + v, function (err, t) {
-      if (err) {
-        console.error(err);
-        return;
-      }
+    loadText("js/e21_" + eIdx + ".js?v=" + v, function (err, t) {
+      if (err) { console.error(err); return; }
       eBuf += t;
       eIdx++;
       nextE();
