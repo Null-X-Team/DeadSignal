@@ -1,4 +1,4 @@
-// DeadSignal boot v21 — assemble engine from e21_*.js
+// DeadSignal boot v21f — inflate engine from egz_*.b64
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -17,35 +17,48 @@
     x.onerror = function () { cb(new Error("net " + src)); };
     x.send();
   }
+  function gunzipB64(b64) {
+    var bin = atob(b64);
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
+  }
+  var v = "20260823v21f";
+  var parts = 4;
+  var buf = "";
+  var idx = 0;
   function afterEngine() {
     loadScript("js/ui.js?v=" + v, function () {
       loadScript("js/gore.js?v=" + v, function () {
-        console.log("[DeadSignal] ready v21");
+        console.log("[DeadSignal] ready v21f");
         if (window.__dsBoot) window.__dsBoot();
       });
     });
   }
-  var v = "20260822v21";
-  var eParts = 8;
-  var eBuf = "";
-  var eIdx = 0;
-  function nextE() {
-    if (eIdx >= eParts) {
-      try {
-        (0, eval)(eBuf);
-        console.log("[DeadSignal] engine v21 assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
-        afterEngine();
-      } catch (err) {
-        console.error("[DeadSignal] assemble failed", err);
-      }
+  function next() {
+    if (idx >= parts) {
+      gunzipB64(buf.trim()).then(function (code) {
+        try {
+          (0, eval)(code);
+          console.log("[DeadSignal] engine inflated", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
+          afterEngine();
+        } catch (err) {
+          console.error("[DeadSignal] eval failed", err);
+        }
+      }).catch(function (e) {
+        console.error("[DeadSignal] inflate failed", e);
+      });
       return;
     }
-    loadText("js/e21_" + eIdx + ".js?v=" + v, function (err, t) {
-      if (err) { console.error(err); return; }
-      eBuf += t;
-      eIdx++;
-      nextE();
+    loadText("js/egz_" + idx + ".b64?v=" + v, function (err, t) {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      buf += t.trim();
+      idx++;
+      next();
     });
   }
-  loadScript("js/guns.js?v=" + v, nextE);
+  loadScript("js/guns.js?v=" + v, next);
 })();
