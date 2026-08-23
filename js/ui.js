@@ -28,6 +28,8 @@
 
   var lastHud = null;
   var lastPush = 0;
+  var lastShopKey = "";
+  var hoveredShopItem = null;
 
   var engine;
   try {
@@ -74,7 +76,7 @@
     var reload = document.getElementById("reload-fill");
     if (reload) reload.style.width = hud.reloadT * 100 + "%";
     setText("kick-status", hud.kickT > 0 ? hud.kickT.toFixed(1) + "s" : "READY");
-    if (hud.phase === "intermission" && restBanner) {
+    if (hud.phase === "intermission") {
       restBanner.textContent =
         "Armory open · " + Math.max(0, Math.ceil(hud.rest)) + "s until next wave";
     }
@@ -86,9 +88,8 @@
     setText("weapon-slot", "[" + hud.slot + "]");
 
     var playing = hud.phase === "combat" || hud.phase === "intermission" || hud.phase === "dying";
-    var hudRoot = document.getElementById("hud");
-    if (hudRoot) hudRoot.style.display = playing || hud.phase === "dying" ? "block" : "none";
-    if (canvas) canvas.style.cursor = playing ? "crosshair" : "default";
+    document.getElementById("hud").style.display = playing || hud.phase === "dying" ? "block" : "none";
+    canvas.style.cursor = playing ? "crosshair" : "default";
 
     if (messageEl) {
       if (hud.message) {
@@ -112,7 +113,20 @@
     }
 
     if (shopEl) shopEl.classList.toggle("hidden", !hud.shopOpen);
-    if (hud.shopOpen) renderShop(hud);
+    if (hud.shopOpen) {
+      // Only rebuild list when credits/owned change — prevents stats panel flash
+      var key = hud.credits + "|" + JSON.stringify(hud.owned || {});
+      if (key !== lastShopKey) {
+        lastShopKey = key;
+        renderShop(hud);
+      } else {
+        // still update buy-button disabled states cheaply
+        updateShopButtons(hud);
+      }
+    } else {
+      lastShopKey = "";
+      hoveredShopItem = null;
+    }
 
     if (hud.phase === "menu" || hud.phase === "dead") {
       if (menu) menu.classList.remove("hidden");
@@ -132,7 +146,7 @@
         if (menuControls) menuControls.style.display = "none";
         if (startBtn) startBtn.textContent = "Restart containment";
       } else {
-        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v20";
+        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v23";
         if (menuTitle) menuTitle.innerHTML = "Dead<br><span>Signal</span>";
         if (menuCopy) menuCopy.textContent =
           "A 2D facility hallway. Signals come through the bay doors. Between waves, spend credits on guns and patch-ups at the armory.";
@@ -186,13 +200,27 @@
       '<div class="stat-row"><span>Cost</span><span>' + item.cost + ' cr</span></div>';
   }
 
+  function updateShopButtons(hud) {
+    if (!shopList) return;
+    var items = engine.shopItems();
+    var buttons = shopList.querySelectorAll(".buy-btn");
+    items.forEach(function (item, i) {
+      var btn = buttons[i];
+      if (!btn) return;
+      var owned = item.kind === "gun" && item.weaponId ? !!(hud.owned && hud.owned[item.weaponId]) : false;
+      btn.disabled = owned || hud.credits < item.cost;
+      btn.textContent = owned ? "Owned" : item.cost + " cr";
+    });
+  }
+
   function renderShop(hud) {
     if (!shopList) return;
     var items = engine.shopItems();
+    // Preserve hover across rebuild so stats panel does not flash
+    var prevHoverId = hoveredShopItem ? hoveredShopItem.id : null;
     shopList.innerHTML = "";
-    showStats(null);
     items.forEach(function (item) {
-      var owned = item.kind === "gun" && item.weaponId ? hud.owned[item.weaponId] : false;
+      var owned = item.kind === "gun" && item.weaponId ? !!(hud.owned && hud.owned[item.weaponId]) : false;
       var li = document.createElement("li");
       li.className = "shop-item";
       var icon =
@@ -218,11 +246,36 @@
         if (shopNote) shopNote.textContent = engine.buy(item);
         engine.pushHud();
       });
-      li.addEventListener("mouseenter", function () { showStats(item); });
-      li.addEventListener("mouseleave", function () { showStats(null); });
+      li.addEventListener("mouseenter", function () {
+        hoveredShopItem = item;
+        showStats(item);
+      });
+      li.addEventListener("mouseleave", function () {
+        // Only clear if this item is still the active hover (avoids flash on rebuild)
+        if (hoveredShopItem === item) {
+          hoveredShopItem = null;
+          showStats(null);
+        }
+      });
       li.appendChild(btn);
       shopList.appendChild(li);
     });
+    // Restore stats after rebuild if still hovering the same item
+    if (prevHoverId) {
+      var still = null;
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].id === prevHoverId) { still = items[i]; break; }
+      }
+      if (still) {
+        hoveredShopItem = still;
+        showStats(still);
+      } else {
+        hoveredShopItem = null;
+        showStats(null);
+      }
+    } else if (!hoveredShopItem) {
+      showStats(null);
+    }
   }
 
   function setText(id, value) {
@@ -235,21 +288,18 @@
       try { engine.startRun(); } catch (e) { console.error(e); }
     });
   }
-  var closeShop = document.getElementById("close-shop");
-  if (closeShop) closeShop.addEventListener("click", function () {
+  document.getElementById("close-shop").addEventListener("click", function () {
     engine.closeShop();
   });
-  var nextWave = document.getElementById("next-wave");
-  if (nextWave) nextWave.addEventListener("click", function () {
+  document.getElementById("next-wave").addEventListener("click", function () {
     engine.continueWaves();
   });
-  if (openArmory) openArmory.addEventListener("click", function () {
+  openArmory.addEventListener("click", function () {
     engine.toggleShop();
   });
 
   function hold(id, code) {
     var el = document.getElementById(id);
-    if (!el) return;
     var on = function (e) {
       e.preventDefault();
       engine.holdKey(code, true);
@@ -264,18 +314,15 @@
   }
   hold("left-btn", "KeyA");
   hold("right-btn", "KeyD");
-  var kickBtn = document.getElementById("kick-btn");
-  if (kickBtn) kickBtn.addEventListener("pointerdown", function (e) {
+  document.getElementById("kick-btn").addEventListener("pointerdown", function (e) {
     e.preventDefault();
     engine.pulseKick();
   });
-  var reloadBtn = document.getElementById("reload-btn");
-  if (reloadBtn) reloadBtn.addEventListener("pointerdown", function (e) {
+  document.getElementById("reload-btn").addEventListener("pointerdown", function (e) {
     e.preventDefault();
     engine.beginReload();
   });
-  var shopBtn = document.getElementById("shop-btn");
-  if (shopBtn) shopBtn.addEventListener("pointerdown", function (e) {
+  document.getElementById("shop-btn").addEventListener("pointerdown", function (e) {
     e.preventDefault();
     engine.toggleShop();
   });
