@@ -1,4 +1,4 @@
-// DeadSignal boot v26 — inflate engine from eg8_*.b64
+// DeadSignal boot v22 — inflate engine from eg8_*.b64
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -23,15 +23,15 @@
     for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
   }
-  var v = "20260823v26";
-  var parts = 9;
+  var v = "20260823v27";
+  var parts = 10;
   var buf = "";
   var idx = 0;
   function afterEngine() {
     loadScript("js/ui.js?v=" + v, function () {
       loadScript("js/gore.js?v=" + v, function () {
         loadScript("js/patch-v22.js?v=" + v, function () {
-          console.log("[DeadSignal] ready v26");
+          console.log("[DeadSignal] ready v27");
         });
       });
     });
