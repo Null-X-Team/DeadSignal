@@ -9,6 +9,17 @@
       p.textContent = "Engine failed to load. Hard-refresh (Ctrl+Shift+R).";
       m.querySelector(".menu-card") && m.querySelector(".menu-card").appendChild(p);
     }
+    // Still wire start button so a late-load retry can help
+    var sb = document.getElementById("start-btn");
+    if (sb) {
+      sb.addEventListener("click", function () {
+        if (window.DeadSignalGame && window.DeadSignalGame.Engine) {
+          location.reload();
+        } else {
+          alert("Engine still loading / failed. Hard-refresh (Ctrl+Shift+R).");
+        }
+      });
+    }
     return;
   }
 
@@ -152,7 +163,7 @@
         if (menuControls) menuControls.style.display = "none";
         if (startBtn) startBtn.textContent = "Restart containment";
       } else {
-        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v24";
+        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v30";
         if (menuTitle) menuTitle.innerHTML = "Dead<br><span>Signal</span>";
         if (menuCopy)
           menuCopy.textContent =
@@ -165,192 +176,117 @@
     }
   }
 
-  function weaponById(id) {
-    if (!engine || !engine.weapons) return null;
-    for (var i = 0; i < engine.weapons.length; i++) {
-      if (engine.weapons[i].id === id) return engine.weapons[i];
-    }
-    return null;
-  }
-
-  function showStats(itemOrWeapon, cost) {
+  function showStats(item, cost) {
     var panel = document.getElementById("shop-stats");
     if (!panel) return;
-    if (!itemOrWeapon) {
+    if (!item) {
       panel.innerHTML =
-        '<div class="label cyan">Inspect</div><p class="subtitle">Click a loadout slot, then pick a gun. Hover for stats.</p>';
+        '<div class="label cyan">Inspect</div><p class="subtitle">Click a loadout slot, then pick a gun.</p>';
       return;
     }
-    var w =
-      itemOrWeapon.damage !== undefined
-        ? itemOrWeapon
-        : weaponById(itemOrWeapon.weaponId || itemOrWeapon.id);
-    if (!w) {
-      panel.innerHTML =
-        '<div class="label cyan">' +
-        (itemOrWeapon.name || "") +
-        '</div><p class="subtitle">' +
-        (itemOrWeapon.blurb || "") +
-        "</p>";
-      return;
-    }
-    var type = w.melee ? "MELEE" : (w.kind || "gun").toUpperCase();
-    var rpm = w.fireRate > 0 ? (60 / w.fireRate).toFixed(0) + " rpm" : "—";
-    var c = cost != null ? cost : w.cost;
-    panel.innerHTML =
-      '<div class="label cyan">' +
-      w.name +
+    var pierce = item.pierce ? "Yes" : "No";
+    var rows =
+      "<div class=\"label cyan\">" +
+      (item.name || "Item") +
       "</div>" +
-      '<p class="subtitle">' +
-      (w.melee ? "Bound to E" : "Loadout gun") +
+      "<p class=\"subtitle\">" +
+      (item.blurb || "") +
       "</p>" +
-      '<div class="stat-row"><span>Type</span><span>' +
-      type +
-      "</span></div>" +
-      '<div class="stat-row"><span>Damage</span><span>' +
-      w.damage +
-      (w.pellets > 1 ? " x" + w.pellets : "") +
-      "</span></div>" +
-      '<div class="stat-row"><span>Fire rate</span><span>' +
-      rpm +
-      "</span></div>" +
-      '<div class="stat-row"><span>Mag</span><span>' +
-      (w.melee ? "—" : w.mag) +
-      "</span></div>" +
-      '<div class="stat-row"><span>Reload</span><span>' +
-      (w.melee ? "—" : w.reload.toFixed(2) + "s") +
-      "</span></div>" +
-      '<div class="stat-row"><span>Cost</span><span>' +
-      (c === 0 ? "Free" : c + " cr") +
-      "</span></div>";
-  }
-
-  function gunThumb(weaponId) {
-    var g = window.DS_GUNS && window.DS_GUNS[weaponId];
-    if (g && g.complete && g.naturalWidth > 0) {
-      return '<img class="loadout-thumb" src="' + g.src + '" alt="" />';
-    }
-    return '<div class="loadout-thumb placeholder"></div>';
+      "<div class=\"stat-grid\">" +
+      "<div><span class=\"label\">Damage</span> " +
+      (item.damage != null ? item.damage : "—") +
+      "</div>" +
+      "<div><span class=\"label\">Fire rate</span> " +
+      (item.fireRate != null ? item.fireRate + "s" : "—") +
+      "</div>" +
+      "<div><span class=\"label\">Mag</span> " +
+      (item.mag != null ? item.mag : "—") +
+      "</div>" +
+      "<div><span class=\"label\">Pierce armor</span> " +
+      pierce +
+      "</div>" +
+      "</div>";
+    if (cost != null && cost > 0) rows += "<p class=\"subtitle\">Cost " + cost + " credits</p>";
+    panel.innerHTML = rows;
   }
 
   function renderShop(hud) {
     if (!shopList) return;
-    var loadout = hud.loadout || ["pistol", null, null];
     shopList.innerHTML = "";
+    var loadout = hud.loadout || ["pistol", null, null];
+    var section = document.createElement("li");
+    section.className = "shop-section";
+    section.innerHTML = "<h3>Loadout slots</h3>";
+    shopList.appendChild(section);
 
-    var slotsHeader = document.createElement("li");
-    slotsHeader.className = "shop-section";
-    slotsHeader.innerHTML = "<h3>Loadout (3 slots) · Q to cycle in-game</h3>";
-    shopList.appendChild(slotsHeader);
-
-    for (var s = 0; s < 3; s++) {
-      (function (slotIdx) {
-        var id = loadout[slotIdx];
-        var w = id ? weaponById(id) : null;
+    for (var i = 0; i < 3; i++) {
+      (function (slot) {
+        var id = loadout[slot];
+        var w = id && engine.weapons.find(function (x) { return x.id === id; });
         var li = document.createElement("li");
-        li.className =
-          "shop-item loadout-slot" +
-          (selectedLoadoutSlot === slotIdx ? " selected" : "") +
-          (hud.loadoutIndex === slotIdx ? " active" : "");
-        var label = w ? w.name : "Empty";
-        var thumb = w ? gunThumb(w.id) : '<div class="loadout-thumb empty">+</div>';
+        li.className = "shop-item loadout-slot" + (selectedLoadoutSlot === slot ? " selected" : "") + (hud.loadoutIndex === slot ? " active" : "");
+        var thumb = "";
+        if (w && window.DS_GUNS && window.DS_GUNS[w.hold || w.id]) {
+          thumb = '<img class="loadout-thumb" src="' + (window.DS_GUNS[w.hold || w.id].src || "") + '" alt="">';
+        } else if (!w) {
+          thumb = '<div class="loadout-thumb empty">+</div>';
+        } else {
+          thumb = '<div class="loadout-thumb placeholder">·</div>';
+        }
         li.innerHTML =
           '<div class="shop-item-main">' +
           thumb +
           "<div><h3>Slot " +
-          (slotIdx + 1) +
-          " · " +
-          label +
-          "</h3><p>" +
-          (w ? "Click to change" : "Click to equip a gun") +
+          (slot + 1) +
+          (w ? " — " + w.name : " — Empty") +
+          "</h3><p class=\"subtitle\">" +
+          (w ? "Click to reassign" : "Click then choose a gun") +
           "</p></div></div>";
         li.addEventListener("click", function () {
-          selectedLoadoutSlot = slotIdx;
+          selectedLoadoutSlot = slot;
           lastShopKey = "";
           engine.pushHud();
         });
         if (w) {
           li.addEventListener("mouseenter", function () {
-            showStats(w, w.owned ? 0 : w.cost);
+            showStats(w, 0);
           });
         }
         shopList.appendChild(li);
-      })(s);
+      })(i);
     }
 
-    var utilHeader = document.createElement("li");
-    utilHeader.className = "shop-section";
-    utilHeader.innerHTML = "<h3>Supplies</h3>";
-    shopList.appendChild(utilHeader);
-
-    var utilities = [
-      { id: "patch", name: "Field Patch", blurb: "Seal 40 vital points.", cost: 22, kind: "patch" },
-      { id: "kit", name: "Trauma Kit", blurb: "Full vital restore.", cost: 48, kind: "patch" },
-      { id: "ammo", name: "Mag Crate", blurb: "Reserve ammo for held gun.", cost: 16, kind: "ammo" }
-    ];
-    utilities.forEach(function (item) {
-      var li = document.createElement("li");
-      li.className = "shop-item";
-      li.innerHTML =
-        '<div class="shop-item-main"><div><h3>' +
-        item.name +
-        "</h3><p>" +
-        item.blurb +
-        "</p></div></div>";
-      var btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "buy-btn";
-      btn.textContent = item.cost + " cr";
-      btn.disabled = hud.credits < item.cost;
-      btn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        if (shopNote) shopNote.textContent = engine.buy(item);
-        engine.pushHud();
-      });
-      li.appendChild(btn);
-      shopList.appendChild(li);
-    });
-
     if (selectedLoadoutSlot !== null) {
-      var pickHeader = document.createElement("li");
-      pickHeader.className = "shop-section";
-      pickHeader.innerHTML =
-        "<h3>Choose gun for slot " + (selectedLoadoutSlot + 1) + "</h3>";
-      shopList.appendChild(pickHeader);
-
-      engine.weapons.forEach(function (w) {
-        if (w.melee) return;
-        var owned = !!(hud.owned && hud.owned[w.id]);
-        var inLoadout = (hud.loadout || []).indexOf(w.id) >= 0;
+      var sec2 = document.createElement("li");
+      sec2.className = "shop-section";
+      sec2.innerHTML = "<h3>Choose weapon for slot " + (selectedLoadoutSlot + 1) + "</h3>";
+      shopList.appendChild(sec2);
+      var items = engine.shopItems ? engine.shopItems() : [];
+      items.forEach(function (it) {
+        if (it.kind !== "gun") return;
+        var w = engine.weapons.find(function (x) { return x.id === it.weaponId; });
+        if (!w) return;
+        var owned = hud.owned && hud.owned[w.id];
         var li = document.createElement("li");
-        li.className = "shop-item gun-pick";
-        var costLabel = owned ? (inLoadout ? "Equipped" : "Free") : w.cost + " cr";
-        li.innerHTML =
-          '<div class="shop-item-main">' +
-          gunThumb(w.id) +
-          "<div><h3>" +
-          w.name +
-          "</h3><p>" +
-          w.damage +
-          " dmg · " +
-          (w.fireRate > 0 ? (60 / w.fireRate).toFixed(0) + " rpm" : "—") +
-          " · mag " +
-          w.mag +
-          "</p></div></div>";
+        li.className = "shop-item";
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "buy-btn";
-        btn.textContent = costLabel;
-        btn.disabled = !owned && hud.credits < w.cost;
+        btn.textContent = owned ? "Equip " + w.name : "Buy " + w.name + " (" + it.cost + ")";
+        btn.disabled = !owned && hud.credits < it.cost;
         btn.addEventListener("click", function (e) {
           e.stopPropagation();
-          var note = engine.equipToSlot(selectedLoadoutSlot, w.id);
-          if (shopNote) shopNote.textContent = note;
+          if (!owned) {
+            var note = engine.buy(it.id);
+            if (shopNote) shopNote.textContent = note || "";
+          }
+          var note2 = engine.equipToSlot(selectedLoadoutSlot, w.id);
+          if (shopNote) shopNote.textContent = note2 || "";
           selectedLoadoutSlot = null;
           engine.pushHud();
         });
         li.addEventListener("mouseenter", function () {
-          showStats(w, owned ? 0 : w.cost);
+          showStats(Object.assign({}, w, { blurb: it.blurb, pierce: w.pierce }), owned ? 0 : it.cost);
         });
         li.appendChild(btn);
         shopList.appendChild(li);
@@ -366,26 +302,36 @@
   }
 
   if (startBtn) {
-    startBtn.addEventListener("click", function () {
+    startBtn.addEventListener("click", function (ev) {
       try {
+        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+        if (!engine) {
+          console.error("engine missing on start");
+          alert("Engine not ready. Hard-refresh (Ctrl+Shift+R).");
+          return;
+        }
         engine.startRun();
       } catch (e) {
-        console.error(e);
+        console.error("startRun failed", e);
+        alert("Start failed: " + (e && e.message ? e.message : e));
       }
     });
   }
-  document.getElementById("close-shop").addEventListener("click", function () {
-    engine.closeShop();
+  var closeShopBtn = document.getElementById("close-shop");
+  if (closeShopBtn) closeShopBtn.addEventListener("click", function () {
+    try { engine.closeShop(); } catch (e) { console.error(e); }
   });
-  document.getElementById("next-wave").addEventListener("click", function () {
-    engine.continueWaves();
+  var nextWaveBtn = document.getElementById("next-wave");
+  if (nextWaveBtn) nextWaveBtn.addEventListener("click", function () {
+    try { engine.continueWaves(); } catch (e) { console.error(e); }
   });
-  openArmory.addEventListener("click", function () {
-    engine.toggleShop();
+  if (openArmory) openArmory.addEventListener("click", function () {
+    try { engine.toggleShop(); } catch (e) { console.error(e); }
   });
 
   function hold(id, code) {
     var el = document.getElementById(id);
+    if (!el) return;
     var on = function (e) {
       e.preventDefault();
       engine.holdKey(code, true);
@@ -400,15 +346,18 @@
   }
   hold("left-btn", "KeyA");
   hold("right-btn", "KeyD");
-  document.getElementById("kick-btn").addEventListener("pointerdown", function (e) {
+  var kickBtn = document.getElementById("kick-btn");
+  if (kickBtn) kickBtn.addEventListener("pointerdown", function (e) {
     e.preventDefault();
     engine.swingHatchet();
   });
-  document.getElementById("reload-btn").addEventListener("pointerdown", function (e) {
+  var reloadBtn = document.getElementById("reload-btn");
+  if (reloadBtn) reloadBtn.addEventListener("pointerdown", function (e) {
     e.preventDefault();
     engine.beginReload();
   });
-  document.getElementById("shop-btn").addEventListener("pointerdown", function (e) {
+  var shopBtn = document.getElementById("shop-btn");
+  if (shopBtn) shopBtn.addEventListener("pointerdown", function (e) {
     e.preventDefault();
     engine.toggleShop();
   });
