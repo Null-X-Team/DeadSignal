@@ -23,7 +23,7 @@
     for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
   }
-  var v = "20260823v25";
+  var v = "20260823v26";
   var parts = 9;
   var buf = "";
   var idx = 0;
@@ -31,7 +31,7 @@
     loadScript("js/ui.js?v=" + v, function () {
       loadScript("js/gore.js?v=" + v, function () {
         loadScript("js/patch-v22.js?v=" + v, function () {
-          console.log("[DeadSignal] ready v25");
+          console.log("[DeadSignal] ready v26");
         });
       });
     });
