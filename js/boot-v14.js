@@ -1,4 +1,4 @@
-// DeadSignal boot v20 — assemble engine.p1+p2 + guns
+// DeadSignal boot v20 — assemble e20_0..e20_3 + guns
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -18,25 +18,32 @@
     x.send();
   }
   var v = "20260822v20";
-  loadScript("js/guns.js?v=" + v, function () {
-    loadText("js/engine.p1.js?v=" + v, function (e1, a) {
-      if (e1) return console.error(e1);
-      loadText("js/engine.p2.js?v=" + v, function (e2, b) {
-        if (e2) return console.error(e2);
-        try {
-          (0, eval)(a + b);
-          console.log("[DeadSignal] engine v20 assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
-        } catch (err) {
-          console.error("[DeadSignal] eval failed", err);
-          return;
-        }
-        loadScript("js/ui.js?v=" + v, function () {
-          loadScript("js/gore.js?v=" + v, function () {
-            console.log("[DeadSignal] ready v20");
-            if (window.__dsBoot) window.__dsBoot();
-          });
+  var parts = 4;
+  var buf = "";
+  var idx = 0;
+  function next() {
+    if (idx >= parts) {
+      try {
+        (0, eval)(buf);
+        console.log("[DeadSignal] engine v20 assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
+      } catch (err) {
+        console.error("[DeadSignal] eval failed", err);
+        return;
+      }
+      loadScript("js/ui.js?v=" + v, function () {
+        loadScript("js/gore.js?v=" + v, function () {
+          console.log("[DeadSignal] ready v20");
+          if (window.__dsBoot) window.__dsBoot();
         });
       });
+      return;
+    }
+    loadText("js/e20_" + idx + ".js?v=" + v, function (err, t) {
+      if (err) { console.error(err); return; }
+      buf += t;
+      idx++;
+      next();
     });
-  });
+  }
+  loadScript("js/guns.js?v=" + v, next);
 })();
