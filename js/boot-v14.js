@@ -30,7 +30,9 @@
   function afterEngine() {
     loadScript("js/ui.js?v=" + v, function () {
       loadScript("js/gore.js?v=" + v, function () {
-        console.log("[DeadSignal] ready v22");
+        loadScript("js/patch-v22.js?v=" + v, function () {
+          console.log("[DeadSignal] ready v22");
+        });
       });
     });
   }
