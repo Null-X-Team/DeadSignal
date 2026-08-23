@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0a0b0d">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>Dead Signal v19</title>
-  <link rel="stylesheet" href="css/style.css?v=20260822v19d">
+  <title>Dead Signal v20</title>
+  <link rel="stylesheet" href="css/style.css?v=20260822v20">
   <style>
     #build-tag {
       position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
@@ -20,7 +20,7 @@
 <body>
   <div id="app">
     <div id="game-shell">
-      <div id="build-tag">BUILD v19d — hatchet melee + guns + start</div>
+      <div id="build-tag">BUILD v20 — guns + blood + corpses</div>
       <canvas id="game" width="1280" height="720"></canvas>
       <div id="hud">
         <div id="status" class="hud-panel">
@@ -56,7 +56,7 @@
           </div>
         </div>
         <div id="help" class="hud-panel">
-          A/D walk · Ctrl crouch · Mouse aim · Space hatchet · R reload · E armory · 1-4 guns
+          A/D walk · Ctrl crouch · Mouse aim · Space hatchet · R reload · E armory · 1-0 guns
         </div>
         <div id="message"></div>
         <div id="rest-banner"></div>
@@ -80,34 +80,40 @@
         </button>
       </div>
       <div id="shop" class="hidden">
-        <div class="shop-card">
+        <div class="shop-card shop-card-wide">
           <div class="shop-head">
             <div>
               <div class="label cyan">Facility armory</div>
               <h2>Supply rack</h2>
               <p class="subtitle" style="margin:8px 0 0">
-                Credits <span id="shop-credits">0</span>. Guns unlock to slots 2-4. Patch-ups seal vitals.
+                Credits <span id="shop-credits">0</span>. Hover a weapon for stats. Hatchet is slot 5.
               </p>
             </div>
             <button id="close-shop" class="ghost-btn" type="button">Close</button>
           </div>
-          <ul id="shop-list" class="shop-list"></ul>
+          <div class="shop-body">
+            <div id="shop-stats" class="shop-stats">
+              <div class="label cyan">Inspect</div>
+              <p class="subtitle">Hover a weapon for stats.</p>
+            </div>
+            <ul id="shop-list" class="shop-list"></ul>
+          </div>
           <p id="shop-note"></p>
           <button id="next-wave" class="primary-btn" type="button">Next wave</button>
         </div>
       </div>
       <div id="menu">
         <div class="menu-card">
-          <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v19</div>
+          <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v20</div>
           <h1 id="menu-title">DEAD SIGNAL</h1>
           <p id="menu-copy" class="subtitle">Hallway clear. Doors open. Signals incoming.</p>
           <button id="start-btn" class="primary-btn" type="button">Begin transmission</button>
-          <p class="hint">A/D move · Ctrl crouch · mouse aim · Space hatchet · R reload · E shop</p>
+          <p class="hint">A/D move · Ctrl crouch · mouse aim · Space hatchet · R reload · E shop · 1-0 guns</p>
           <div id="menu-controls"></div>
         </div>
       </div>
     </div>
   </div>
-  <script src="js/boot-v14.js?v=20260822v19d"></script>
+  <script src="js/boot-v14.js?v=20260822v20"></script>
 </body>
 </html>
