@@ -1,31 +1,42 @@
-// DeadSignal — weapon images from /imgs (fallback to procedural if missing)
+// DeadSignal — weapon images from /imgs (fallback paths + procedural if missing)
 (function () {
-  function load(src) {
+  function loadFirst(paths) {
     var img = new Image();
     img.decoding = "async";
-    img.src = src;
-    img.onerror = function () { console.warn("[DeadSignal] image missing:", src); };
+    var i = 0;
+    function tryNext() {
+      if (i >= paths.length) {
+        console.warn("[DeadSignal] all paths failed", paths);
+        return;
+      }
+      img.src = paths[i++];
+    }
+    img.onerror = tryNext;
+    tryNext();
     return img;
   }
-  var glock = load("imgs/Glock.png");
-  var pump = load("imgs/pump.png");
-  var hatchet = load("imgs/Hatchet.png");
-  // Map every weapon id — reuse closest art when custom art missing
+  var glock = loadFirst(["imgs/Glock.png", "imgs/glock.png", "img/gun_pistol.png"]);
+  var pump = loadFirst(["imgs/pump.png", "imgs/Pump.png", "img/gun_scatter.png"]);
+  var hatchet = loadFirst(["imgs/Hatchet.png", "imgs/hatchet.png"]);
+  var smgImg = loadFirst(["imgs/smg.png", "img/gun_smg.png", "imgs/Glock.png"]);
+  var rifleImg = loadFirst(["imgs/rifle.png", "img/gun_rifle.png", "imgs/Glock.png"]);
+  var railImg = loadFirst(["imgs/rail.png", "img/gun_rail.png", "imgs/Glock.png"]);
+  var autoImg = loadFirst(["imgs/auto.png", "img/gun_auto.png", "imgs/Glock.png"]);
   window.DS_GUNS = {
     pistol: glock,
     scatter: pump,
-    smg: glock,
-    rail: glock,
+    smg: smgImg,
+    rail: railImg,
     hatchet: hatchet,
     melee: hatchet,
-    carbine: glock,
-    burst: glock,
+    carbine: rifleImg,
+    burst: smgImg,
     slug: pump,
-    sniper: glock,
-    auto: glock,
-    plasma: glock,
-    nailer: glock,
-    marksman: glock,
+    sniper: rifleImg,
+    auto: autoImg,
+    plasma: railImg,
+    nailer: smgImg,
+    marksman: rifleImg,
     cluster: pump
   };
   console.log("[DeadSignal] guns queued", Object.keys(window.DS_GUNS));

@@ -1,4 +1,4 @@
-// DeadSignal boot v20 — inflate engine from egz_*.b64
+// DeadSignal boot v21 — inflate engine from egz_*.b64
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -23,7 +23,7 @@
     for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
   }
-  var v = "20260822v20c";
+  var v = "20260822v21";
   var parts = 4;
   var buf = "";
   var idx = 0;
@@ -32,14 +32,14 @@
       gunzipB64(buf.trim()).then(function (code) {
         try {
           (0, eval)(code);
-          console.log("[DeadSignal] engine v20 inflated", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
+          console.log("[DeadSignal] engine v21 inflated", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
         } catch (err) {
           console.error("[DeadSignal] eval failed", err);
           return;
         }
         loadScript("js/ui.js?v=" + v, function () {
           loadScript("js/gore.js?v=" + v, function () {
-            console.log("[DeadSignal] ready v20");
+            console.log("[DeadSignal] ready v21");
             if (window.__dsBoot) window.__dsBoot();
           });
         });
