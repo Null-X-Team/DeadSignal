@@ -1,4 +1,4 @@
-// DeadSignal boot v21f — inflate engine from egz_*.b64
+// DeadSignal boot v21f — inflate engine from eg8_*.b64
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -24,14 +24,13 @@
     return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
   }
   var v = "20260823v21f";
-  var parts = 4;
+  var parts = 9;
   var buf = "";
   var idx = 0;
   function afterEngine() {
     loadScript("js/ui.js?v=" + v, function () {
       loadScript("js/gore.js?v=" + v, function () {
         console.log("[DeadSignal] ready v21f");
-        if (window.__dsBoot) window.__dsBoot();
       });
     });
   }
@@ -50,7 +49,7 @@
       });
       return;
     }
-    loadText("js/egz_" + idx + ".b64?v=" + v, function (err, t) {
+    loadText("js/eg8_" + idx + ".b64?v=" + v, function (err, t) {
       if (err) {
         console.error(err);
         return;
