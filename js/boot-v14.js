@@ -1,4 +1,4 @@
-// DeadSignal boot v19 — direct engine.js (reliable start) + guns
+// DeadSignal boot v19 — direct engine.js + guns (reliable start)
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -7,7 +7,7 @@
     s.onerror = function () { console.error("[DeadSignal] fail", src); cb && cb(); };
     document.head.appendChild(s);
   }
-  var v = "20260822v19a";
+  var v = "20260822v19b";
   loadScript("js/guns.js?v=" + v, function () {
     loadScript("js/engine.js?v=" + v, function () {
       console.log("[DeadSignal] engine v19 loaded", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
