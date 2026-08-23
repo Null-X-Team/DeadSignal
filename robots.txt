@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://Null-X-Team/DeadSignal/sitemap.xml
