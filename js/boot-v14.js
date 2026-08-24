@@ -1,4 +1,4 @@
-// DeadSignal boot v30h4 — assemble engine from epart_0..31
+// DeadSignal boot v30h5 — direct engine.js
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -22,41 +22,20 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
-  var v = "20260823v30h4";
-  var parts = 32;
-  var idx = 0;
-  function afterEngine() {
-    if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
-      showErr("Engine failed to load. Hard-refresh (Ctrl+Shift+R).");
-      return;
-    }
-    loadScript("js/ui.js?v=" + v, function () {
-      loadScript("js/gore.js?v=" + v, function () {
-        loadScript("js/patch-v22.js?v=" + v, function () {
-          console.log("[DeadSignal] ready v30h4");
+  var v = "20260824v30h5";
+  loadScript("js/guns.js?v=" + v, function () {
+    loadScript("js/engine.js?v=" + v, function () {
+      if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
+        showErr("Engine failed to load. Hard-refresh (Ctrl+Shift+R).");
+        return;
+      }
+      loadScript("js/ui.js?v=" + v, function () {
+        loadScript("js/gore.js?v=" + v, function () {
+          loadScript("js/patch-v22.js?v=" + v, function () {
+            console.log("[DeadSignal] ready v30h5");
+          });
         });
       });
     });
-  }
-  function next() {
-    if (idx >= parts) {
-      try {
-        var arr = window.__DS_EP || [];
-        var code = "";
-        for (var i = 0; i < arr.length; i++) code += (arr[i] || "");
-        (0, eval)(code);
-        console.log("[DeadSignal] engine assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine));
-        afterEngine();
-      } catch (err) {
-        console.error("[DeadSignal] eval failed", err);
-        showErr("Engine eval failed. Hard-refresh (Ctrl+Shift+R).");
-      }
-      return;
-    }
-    loadScript("js/epart_" + idx + ".js?v=" + v, function () {
-      idx++;
-      next();
-    });
-  }
-  loadScript("js/guns.js?v=" + v, next);
+  });
 })();
