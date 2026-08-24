@@ -1,4 +1,4 @@
-// DeadSignal boot v30h5 — direct engine.js
+// DeadSignal boot v30h5 — assemble engine from epart_0..3 (4 large parts)
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -23,19 +23,40 @@
     } catch (e) {}
   }
   var v = "20260824v30h5";
-  loadScript("js/guns.js?v=" + v, function () {
-    loadScript("js/engine.js?v=" + v, function () {
-      if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
-        showErr("Engine failed to load. Hard-refresh (Ctrl+Shift+R).");
-        return;
-      }
-      loadScript("js/ui.js?v=" + v, function () {
-        loadScript("js/gore.js?v=" + v, function () {
-          loadScript("js/patch-v22.js?v=" + v, function () {
-            console.log("[DeadSignal] ready v30h5");
-          });
+  var parts = 4;
+  var idx = 0;
+  function afterEngine() {
+    if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
+      showErr("Engine failed to load. Hard-refresh (Ctrl+Shift+R).");
+      return;
+    }
+    loadScript("js/ui.js?v=" + v, function () {
+      loadScript("js/gore.js?v=" + v, function () {
+        loadScript("js/patch-v22.js?v=" + v, function () {
+          console.log("[DeadSignal] ready v30h5");
         });
       });
     });
-  });
+  }
+  function next() {
+    if (idx >= parts) {
+      try {
+        var arr = window.__DS_EP || [];
+        var code = "";
+        for (var i = 0; i < arr.length; i++) code += (arr[i] || "");
+        (0, eval)(code);
+        console.log("[DeadSignal] engine assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine), "len", code.length);
+        afterEngine();
+      } catch (err) {
+        console.error("[DeadSignal] eval failed", err);
+        showErr("Engine eval failed. Hard-refresh (Ctrl+Shift+R).");
+      }
+      return;
+    }
+    loadScript("js/epart_" + idx + ".js?v=" + v, function () {
+      idx++;
+      next();
+    });
+  }
+  loadScript("js/guns.js?v=" + v, next);
 })();
