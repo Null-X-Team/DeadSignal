@@ -1,1 +1,1 @@
-PLACEHOLDER
+window.__DS_EP=window.__DS_EP||[];window.__DS_EP[2]="eloadAnim: \"mag\",\n      pierce: false\n    }\n  };\n  // truncated for this test - DO NOT USE\n";
