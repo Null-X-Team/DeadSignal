@@ -1,4 +1,4 @@
-// DeadSignal boot v30h3 — assemble engine from epart_0..15
+// DeadSignal boot v30h4 — assemble engine from epart_0..31
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -22,8 +22,8 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
-  var v = "20260823v30h3";
-  var parts = 16;
+  var v = "20260823v30h4";
+  var parts = 32;
   var idx = 0;
   function afterEngine() {
     if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
@@ -33,7 +33,7 @@
     loadScript("js/ui.js?v=" + v, function () {
       loadScript("js/gore.js?v=" + v, function () {
         loadScript("js/patch-v22.js?v=" + v, function () {
-          console.log("[DeadSignal] ready v30h3");
+          console.log("[DeadSignal] ready v30h4");
         });
       });
     });
