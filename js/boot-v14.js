@@ -1,4 +1,4 @@
-// DeadSignal boot v30h5 — assemble engine from epart_0..7
+// DeadSignal boot v30h5 — assemble engine from epart_0..15
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -23,7 +23,7 @@
     } catch (e) {}
   }
   var v = "20260824v30h5";
-  var parts = 8;
+  var parts = 16;
   var idx = 0;
   function afterEngine() {
     if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
