@@ -9,13 +9,6 @@
       p.textContent = "Engine failed to load. Hard-refresh (Ctrl+Shift+R).";
       m.querySelector(".menu-card") && m.querySelector(".menu-card").appendChild(p);
     }
-    var sb = document.getElementById("start-btn");
-    if (sb) {
-      sb.addEventListener("click", function () {
-        if (window.DeadSignalGame && window.DeadSignalGame.Engine) location.reload();
-        else alert("Engine still loading / failed. Hard-refresh (Ctrl+Shift+R).");
-      });
-    }
     return;
   }
   var canvas = document.getElementById("game");
@@ -111,9 +104,9 @@
         if (menuControls) menuControls.style.display = "none";
         if (startBtn) startBtn.textContent = "Restart containment";
       } else {
-        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v30";
+        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v31";
         if (menuTitle) menuTitle.innerHTML = "Dead<br><span>Signal</span>";
-        if (menuCopy) menuCopy.textContent = "A 2D facility hallway. Carry 3 guns. Q cycles. E hatchet. Space kick.";
+        if (menuCopy) menuCopy.textContent = "A 2D facility hallway. Carry 3 guns. Q cycles. E hatchet. Space kick. ESC pause.";
         if (menuControls) menuControls.style.display = "";
         if (startBtn) startBtn.textContent = "Begin transmission";
       }
@@ -125,7 +118,7 @@
     var panel = document.getElementById("shop-stats");
     if (!panel) return;
     if (!item) {
-      panel.innerHTML = '<div class="label cyan">Inspect</div><p class="subtitle">Click a loadout slot, then pick a gun.</p>';
+      panel.innerHTML = '<div class="label cyan">Inspect</div><p class="subtitle">Click a loadout slot, then pick a gun — or buy supplies.</p>';
       return;
     }
     var pierce = item.pierce ? "Yes" : "No";
@@ -189,7 +182,7 @@
         btn.addEventListener("click", function (e) {
           e.stopPropagation();
           if (!owned) {
-            var note = engine.buy(it.id);
+            var note = engine.buy(it);
             if (shopNote) shopNote.textContent = note || "";
           }
           var note2 = engine.equipToSlot(selectedLoadoutSlot, w.id);
@@ -204,9 +197,42 @@
         li.appendChild(row);
         shopList.appendChild(li);
       });
-    } else {
-      showStats(null);
     }
+    // Supplies: patch-ups + ammo
+    var secSup = document.createElement("li");
+    secSup.className = "shop-section";
+    secSup.innerHTML = "<h3>Supplies</h3>";
+    shopList.appendChild(secSup);
+    var supplyItems = engine.shopItems ? engine.shopItems() : [];
+    supplyItems.forEach(function (it) {
+      if (it.kind !== "patch" && it.kind !== "ammo") return;
+      var li = document.createElement("li");
+      li.className = "shop-item";
+      var row = document.createElement("div");
+      row.className = "shop-item-main";
+      var icon = it.kind === "ammo" ? "▣" : "+";
+      row.innerHTML =
+        '<div class="loadout-thumb placeholder">' + icon + "</div>" +
+        "<div><h3>" + it.name + "</h3><p class=\"subtitle\">" + (it.blurb || "") + "</p></div>";
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "buy-btn";
+      btn.textContent = "Buy (" + it.cost + ")";
+      btn.disabled = hud.credits < it.cost;
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var note = engine.buy(it);
+        if (shopNote) shopNote.textContent = note || "";
+        engine.pushHud();
+      });
+      row.appendChild(btn);
+      li.appendChild(row);
+      li.addEventListener("mouseenter", function () {
+        showStats({ name: it.name, damage: "—", fireRate: "—", mag: "—", blurb: it.blurb }, it.cost);
+      });
+      shopList.appendChild(li);
+    });
+    if (selectedLoadoutSlot === null) showStats(null);
   }
   function setText(id, value) {
     var el = document.getElementById(id);
