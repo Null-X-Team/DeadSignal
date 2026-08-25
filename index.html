@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0a0b0d">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>Dead Signal v30</title>
-  <link rel="stylesheet" href="css/style.css?v=20260824v30h8">
+  <title>Dead Signal v31</title>
+  <link rel="stylesheet" href="css/style.css?v=20260824v31">
   <style>
     #build-tag {
       position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
@@ -53,7 +53,7 @@
 <body>
   <div id="app">
     <div id="game-shell">
-      <div id="build-tag">BUILD v30h8 — fast hatchet · leg hitboxes · stretched prone</div>
+      <div id="build-tag">BUILD v31 — pause · supplies · progressive · prone fix</div>
       <canvas id="game" width="1280" height="720"></canvas>
       <div id="hud">
         <div id="status" class="hud-panel">
@@ -89,7 +89,7 @@
           </div>
         </div>
         <div id="help" class="hud-panel">
-          A/D walk · Ctrl crouch · Mouse aim · E hatchet · Space kick · Q cycle guns · R reload · B armory
+          A/D walk · Ctrl crouch · Mouse aim · E hatchet · Space kick · Q cycle · R reload · B armory · ESC pause
         </div>
         <div id="message"></div>
         <div id="rest-banner"></div>
@@ -119,7 +119,7 @@
               <div class="label cyan">Facility armory</div>
               <h2>Loadout · 3 slots</h2>
               <p class="subtitle" style="margin:8px 0 0">
-                Credits <span id="shop-credits">0</span>. Click a slot, then pick a gun. Hatchet is always on E.
+                Credits <span id="shop-credits">0</span>. Patch-ups, ammo, and guns. Hatchet always on E.
               </p>
             </div>
             <button id="close-shop" class="ghost-btn" type="button">Close</button>
@@ -127,7 +127,7 @@
           <div class="shop-body">
             <div id="shop-stats" class="shop-stats">
               <div class="label cyan">Inspect</div>
-              <p class="subtitle">Click a loadout slot, then pick a gun.</p>
+              <p class="subtitle">Click a loadout slot, then pick a gun — or buy supplies.</p>
             </div>
             <ul id="shop-list" class="shop-list"></ul>
           </div>
@@ -137,16 +137,16 @@
       </div>
       <div id="menu">
         <div class="menu-card">
-          <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v30h8</div>
+          <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v31</div>
           <h1 id="menu-title">DEAD SIGNAL</h1>
-          <p id="menu-copy" class="subtitle">Hallway clear. Carry 3 guns. Q cycles. E hatchet. Space kick.</p>
+          <p id="menu-copy" class="subtitle">Hallway clear. Carry 3 guns. Q cycles. E hatchet. Space kick. ESC pause.</p>
           <button id="start-btn" class="primary-btn" type="button">Begin transmission</button>
-          <p class="hint">A/D move · Ctrl crouch · mouse aim · E hatchet · Space kick · Q cycle · R reload · B shop</p>
+          <p class="hint">A/D move · Ctrl crouch · mouse aim · E hatchet · Space kick · Q cycle · R reload · B shop · ESC pause</p>
           <div id="menu-controls"></div>
         </div>
       </div>
     </div>
   </div>
-  <script src="js/boot-v14.js?v=20260824v30h8"></script>
+  <script src="js/boot-v14.js?v=20260824v31"></script>
 </body>
 </html>
