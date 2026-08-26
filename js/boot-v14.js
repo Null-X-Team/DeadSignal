@@ -1,4 +1,4 @@
-// DeadSignal boot v31 — epart_0..31 + patch-v31
+// DeadSignal boot v32 — epart_0..31 + patches + auth
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -22,7 +22,7 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
-  var v = "20260824v31";
+  var v = "20260826v32";
   var parts = 32;
   var idx = 0;
   function afterEngine() {
@@ -31,10 +31,13 @@
       return;
     }
     loadScript("js/patch-v31.js?v=" + v, function () {
-      loadScript("js/ui.js?v=" + v, function () {
-        loadScript("js/gore.js?v=" + v, function () {
-          loadScript("js/patch-v22.js?v=" + v, function () {
-            console.log("[DeadSignal] ready v31");
+      loadScript("js/patch-v32.js?v=" + v, function () {
+        loadScript("js/ui.js?v=" + v, function () {
+          loadScript("js/gore.js?v=" + v, function () {
+            loadScript("js/patch-v22.js?v=" + v, function () {
+              console.log("[DeadSignal] ready v32");
+              if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
+            });
           });
         });
       });
@@ -60,5 +63,7 @@
       next();
     });
   }
-  loadScript("js/guns.js?v=" + v, next);
+  loadScript("js/auth.js?v=" + v, function () {
+    loadScript("js/guns.js?v=" + v, next);
+  });
 })();
