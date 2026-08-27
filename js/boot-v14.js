@@ -30,15 +30,13 @@
       showErr("Engine failed to load. Hard-refresh (Ctrl+Shift+R).");
       return;
     }
-    loadScript("js/patch-v34.js?v=" + v, function () {
-      loadScript("js/patch-v31.js?v=" + v, function () {
-        loadScript("js/patch-v32.js?v=" + v, function () {
-          loadScript("js/ui.js?v=" + v, function () {
-            loadScript("js/gore.js?v=" + v, function () {
-              loadScript("js/patch-v22.js?v=" + v, function () {
-                console.log("[DeadSignal] ready v34");
-                if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
-              });
+    loadScript("js/patch-v31.js?v=" + v, function () {
+      loadScript("js/patch-v32.js?v=" + v, function () {
+        loadScript("js/ui.js?v=" + v, function () {
+          loadScript("js/gore.js?v=" + v, function () {
+            loadScript("js/patch-v22.js?v=" + v, function () {
+              console.log("[DeadSignal] ready v34");
+              if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
             });
           });
         });
@@ -65,9 +63,12 @@
       next();
     });
   }
-  loadScript("js/supabase-config.js?v=" + v, function () {
-    loadScript("js/auth.js?v=" + v, function () {
-      loadScript("js/guns.js?v=" + v, next);
+  // keyboard fix first so username fields always accept E/Q/B/C/etc.
+  loadScript("js/patch-v34.js?v=" + v, function () {
+    loadScript("js/supabase-config.js?v=" + v, function () {
+      loadScript("js/auth.js?v=" + v, function () {
+        loadScript("js/guns.js?v=" + v, next);
+      });
     });
   });
 })();
