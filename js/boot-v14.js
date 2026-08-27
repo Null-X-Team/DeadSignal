@@ -71,7 +71,9 @@
     loadScript("js/supabase-config.js?v=" + v, function () {
       loadScript("js/auth.js?v=" + v, function () {
         loadScript("js/meta.js?v=" + v, function () {
-          loadScript("js/guns.js?v=" + v, next);
+          loadScript("js/auth-bridge.js?v=" + v, function () {
+            loadScript("js/guns.js?v=" + v, next);
+          });
         });
       });
     });
