@@ -1,4 +1,4 @@
-// DeadSignal auth v33 fixed
+// DeadSignal auth v34 — local + Supabase, top 100
 (function () {
   var AK = "deadSignalAccounts", SK = "deadSignalSession";
   var CFG = window.DS_SUPABASE || null;
@@ -123,7 +123,7 @@
       if (!useCloud()) return Promise.resolve(Auth.leaderboardLocal());
       return getSb().then(function (c) {
         if (!c) return Auth.leaderboardLocal();
-        return c.from("leaderboard").select("username,best_wave,best_score").order("best_wave", { ascending: false }).order("best_score", { ascending: false }).limit(25)
+        return c.from("leaderboard").select("username,best_wave,best_score").order("best_wave", { ascending: false }).order("best_score", { ascending: false }).limit(100)
           .then(function (res) {
             if (res.error || !res.data) return Auth.leaderboardLocal();
             return res.data.map(function (r) { return { name: r.username, bestWave: r.best_wave || 0, bestScore: r.best_score || 0 }; });
@@ -167,7 +167,7 @@
     document.body.appendChild(ov);
     var lb = document.createElement("div");
     lb.id = "lb-overlay";
-    lb.innerHTML = '<div class="lb-card"><div style="font-size:11px;color:#7ee8d4;letter-spacing:.08em;text-transform:uppercase">Facility records</div><h2 style="margin:6px 0 4px">Leaderboard</h2>' +
+    lb.innerHTML = '<div class="lb-card"><div style="font-size:11px;color:#7ee8d4;letter-spacing:.08em;text-transform:uppercase">Facility records</div><h2 style="margin:6px 0 4px">Leaderboard · Top 100</h2>' +
       '<p class="sub" id="lb-note" style="color:#9a8fb0;font-size:13px;margin:0 0 12px">Highest wave, then score.</p><div id="lb-list"></div>' +
       '<button type="button" class="auth-btn auth-btn-p" id="lb-close" style="margin-top:16px">Close</button></div>';
     document.body.appendChild(lb);
@@ -204,7 +204,7 @@
     document.getElementById("lb-close").addEventListener("click", function () { lb.classList.remove("show"); });
     lb.addEventListener("click", function (e) { if (e.target === lb) lb.classList.remove("show"); });
     var note = document.getElementById("auth-backend-note");
-    if (note) note.textContent = useCloud() ? "Cloud accounts via Supabase (global leaderboard)." : "Local accounts on this device. Configure Supabase for global.";
+    if (note) note.textContent = useCloud() ? "Cloud accounts via Supabase (global top 100)." : "Local accounts on this device.";
   }
 
   Auth.refreshChip = function () {
@@ -224,13 +224,13 @@
   Auth.showLeaderboard = function () {
     ensure();
     var list = document.getElementById("lb-list"), note = document.getElementById("lb-note");
-    if (note) note.textContent = useCloud() ? "Global (Supabase). Highest wave, then score." : "This device. Highest wave, then score.";
+    if (note) note.textContent = useCloud() ? "Global top 100 (Supabase). Highest wave, then score." : "This device. Highest wave, then score.";
     list.innerHTML = '<p style="color:#9a8fb0">Loading...</p>';
     document.getElementById("lb-overlay").classList.add("show");
     var me = Auth.username();
     Promise.resolve(Auth.leaderboard()).then(function (rows) {
       if (!rows || !rows.length) { list.innerHTML = '<p style="color:#9a8fb0">No ranked operators yet.</p>'; return; }
-      list.innerHTML = rows.slice(0, 25).map(function (r, i) {
+      list.innerHTML = rows.slice(0, 100).map(function (r, i) {
         var meRow = me && r.name === me;
         return '<div class="lb-row' + (meRow ? " me" : "") + '"><span class="rank">#' + (i + 1) + "</span><span>" + r.name +
           (meRow ? " · you" : "") + '</span><span style="color:#c9d2dc">Wave ' + r.bestWave + " · " + r.bestScore + " pts</span></div>";
