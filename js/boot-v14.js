@@ -1,4 +1,4 @@
-// DeadSignal boot v32 — epart_0..31 + patches + auth
+// DeadSignal boot v33 — epart_0..31 + patches + auth
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -22,7 +22,7 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
-  var v = "20260826v32";
+  var v = "20260827v33";
   var parts = 32;
   var idx = 0;
   function afterEngine() {
@@ -35,7 +35,7 @@
         loadScript("js/ui.js?v=" + v, function () {
           loadScript("js/gore.js?v=" + v, function () {
             loadScript("js/patch-v22.js?v=" + v, function () {
-              console.log("[DeadSignal] ready v32");
+              console.log("[DeadSignal] ready v33");
               if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
             });
           });
@@ -63,7 +63,9 @@
       next();
     });
   }
-  loadScript("js/auth.js?v=" + v, function () {
-    loadScript("js/guns.js?v=" + v, next);
+  loadScript("js/supabase-config.js?v=" + v, function () {
+    loadScript("js/auth.js?v=" + v, function () {
+      loadScript("js/guns.js?v=" + v, next);
+    });
   });
 })();
