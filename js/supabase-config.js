@@ -1,7 +1,5 @@
-// DeadSignal Supabase config — fill these in from your Supabase project
-// Project Settings → API → Project URL + anon public key
-// Leave empty to use local-only accounts.
+// DeadSignal Supabase config — connected project
 window.DS_SUPABASE = {
-  url: "",       // e.g. "https://xxxx.supabase.co"
-  anonKey: ""    // e.g. "eyJhbGciOi..."
+  url: "https://qxlfvwpfdnhnrgifyyhg.supabase.co",
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF4bGZ2d3BmZG5obnJnaWZ5eWhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4NjI4MTcsImV4cCI6MjEwMzQzODgxN30.5FssfneEoPBF8I4VXYmfmh9xG9hr4P8AtGX9V2TolkA"
 };
