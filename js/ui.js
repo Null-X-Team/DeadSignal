@@ -30,7 +30,7 @@
   var selectedLoadoutSlot = null;
   var engine;
   try {
-    engine = new Engine(canvas, function (hud) {
+    engine = window.__deadSignal = window.__dsEngine = new Engine(canvas, function (hud) {
       try {
         var now = performance.now();
         if (now - lastPush < 80 && lastHud && lastHud.phase === hud.phase && lastHud.shopOpen === hud.shopOpen && lastHud.message === hud.message) {
@@ -104,9 +104,9 @@
         if (menuControls) menuControls.style.display = "none";
         if (startBtn) startBtn.textContent = "Restart containment";
       } else {
-        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v38";
+        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v39";
         if (menuTitle) menuTitle.innerHTML = "Dead<br><span>Signal</span>";
-        if (menuCopy) menuCopy.textContent = "Ragdoll · gore · RPG-7 · skill tree. Q cycle · E hatchet · ESC pause.";
+        if (menuCopy) menuCopy.textContent = "Space = KICK · E = hatchet. Shotgun falloff. Limbs fly off.";
         if (menuControls) menuControls.style.display = "";
         if (startBtn) startBtn.textContent = "Begin transmission";
       }
@@ -265,7 +265,7 @@
   hold("left-btn", "KeyA");
   hold("right-btn", "KeyD");
   var kickBtn = document.getElementById("kick-btn");
-  if (kickBtn) kickBtn.addEventListener("pointerdown", function (e) { e.preventDefault(); engine.swingHatchet(); });
+  if (kickBtn) kickBtn.addEventListener("pointerdown", function (e) { e.preventDefault(); engine.legKick(); });
   var reloadBtn = document.getElementById("reload-btn");
   if (reloadBtn) reloadBtn.addEventListener("pointerdown", function (e) { e.preventDefault(); engine.beginReload(); });
   var shopBtn = document.getElementById("shop-btn");
