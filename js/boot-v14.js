@@ -23,8 +23,7 @@
     } catch (e) {}
   }
   var v = "20260827v39";
-  var parts = 32;
-  var idx = 0;
+  var parts = 32, idx = 0;
   function afterEngine() {
     if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
       showErr("Engine failed to load. Hard-refresh (Ctrl+Shift+R).");
@@ -69,10 +68,7 @@
       }
       return;
     }
-    loadScript("js/epart_" + idx + ".js?v=" + v, function () {
-      idx++;
-      next();
-    });
+    loadScript("js/epart_" + idx + ".js?v=" + v, function () { idx++; next(); });
   }
   loadScript("js/patch-v34.js?v=" + v, function () {
     loadScript("js/supabase-config.js?v=" + v, function () {
