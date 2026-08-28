@@ -104,9 +104,9 @@
         if (menuControls) menuControls.style.display = "none";
         if (startBtn) startBtn.textContent = "Restart containment";
       } else {
-        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v31";
+        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v38";
         if (menuTitle) menuTitle.innerHTML = "Dead<br><span>Signal</span>";
-        if (menuCopy) menuCopy.textContent = "A 2D facility hallway. Carry 3 guns. Q cycles. E hatchet. Space kick. ESC pause.";
+        if (menuCopy) menuCopy.textContent = "Ragdoll · gore · RPG-7 · skill tree. Q cycle · E hatchet · ESC pause.";
         if (menuControls) menuControls.style.display = "";
         if (startBtn) startBtn.textContent = "Begin transmission";
       }
@@ -198,7 +198,6 @@
         shopList.appendChild(li);
       });
     }
-    // Supplies: patch-ups + ammo
     var secSup = document.createElement("li");
     secSup.className = "shop-section";
     secSup.innerHTML = "<h3>Supplies</h3>";
