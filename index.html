@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#0a0b0d">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>Dead Signal v35</title>
-  <link rel="stylesheet" href="css/style.css?v=20260827v35">
+  <title>Dead Signal v36</title>
+  <link rel="stylesheet" href="css/style.css?v=20260827v36">
   <style>
     #build-tag {
       position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
@@ -25,35 +25,17 @@
       background: rgba(126,232,212,0.08); border: 1px dashed rgba(126,232,212,0.35);
       border-radius: 4px;
     }
-    .shop-item.loadout-slot.selected {
-      outline: 2px solid #7ee8d4;
-      background: rgba(126,232,212,0.08);
-    }
-    .shop-item.loadout-slot.active h3::after {
-      content: " · active";
-      color: #7ee8d4;
-      font-weight: 400;
-    }
-    .shop-section {
-      list-style: none;
-      padding: 10px 4px 4px;
-      margin: 8px 0 0;
-      border-top: 1px solid rgba(126,232,212,0.15);
-    }
-    .shop-section h3 {
-      margin: 0;
-      font-size: 12px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #7ee8d4;
-    }
+    .shop-item.loadout-slot.selected { outline: 2px solid #7ee8d4; background: rgba(126,232,212,0.08); }
+    .shop-item.loadout-slot.active h3::after { content: " · active"; color: #7ee8d4; font-weight: 400; }
+    .shop-section { list-style: none; padding: 10px 4px 4px; margin: 8px 0 0; border-top: 1px solid rgba(126,232,212,0.15); }
+    .shop-section h3 { margin: 0; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: #7ee8d4; }
     .shop-item-main { display: flex; gap: 10px; align-items: center; }
   </style>
 </head>
 <body>
   <div id="app">
     <div id="game-shell">
-      <div id="build-tag">BUILD v35 — cloud save · coins · skill tree</div>
+      <div id="build-tag">BUILD v36 — guns · prone · eat · joints</div>
       <canvas id="game" width="1280" height="720"></canvas>
       <div id="hud">
         <div id="status" class="hud-panel">
@@ -96,21 +78,11 @@
       </div>
       <button id="open-armory" class="primary-btn" type="button">Open armory</button>
       <div id="touch-controls">
-        <button id="left-btn" class="touch-btn" type="button" aria-label="Move left">
-          <svg viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
-        </button>
-        <button id="right-btn" class="touch-btn" type="button" aria-label="Move right">
-          <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>
-        </button>
-        <button id="reload-btn" class="touch-btn" type="button" aria-label="Reload">
-          <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.2-5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
-        </button>
-        <button id="kick-btn" class="touch-btn" type="button" aria-label="Hatchet">
-          <svg viewBox="0 0 24 24"><path d="M4 20l8-8 2 2-8 8H4v-2z" fill="currentColor"/><path d="M14 4l6 6-3 3-6-6 3-3z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-        </button>
-        <button id="shop-btn" class="touch-btn" type="button" aria-label="Armory">
-          <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
-        </button>
+        <button id="left-btn" class="touch-btn" type="button" aria-label="Move left"><svg viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.2"/></svg></button>
+        <button id="right-btn" class="touch-btn" type="button" aria-label="Move right"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2"/></svg></button>
+        <button id="reload-btn" class="touch-btn" type="button" aria-label="Reload"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.2-5.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+        <button id="kick-btn" class="touch-btn" type="button" aria-label="Hatchet"><svg viewBox="0 0 24 24"><path d="M4 20l8-8 2 2-8 8H4v-2z" fill="currentColor"/><path d="M14 4l6 6-3 3-6-6 3-3z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <button id="shop-btn" class="touch-btn" type="button" aria-label="Armory"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
       </div>
       <div id="shop" class="hidden">
         <div class="shop-card shop-card-wide">
@@ -118,9 +90,7 @@
             <div>
               <div class="label cyan">Facility armory</div>
               <h2>Loadout · 3 slots</h2>
-              <p class="subtitle" style="margin:8px 0 0">
-                Credits <span id="shop-credits">0</span>. Patch-ups, ammo, and guns. Hatchet always on E.
-              </p>
+              <p class="subtitle" style="margin:8px 0 0">Credits <span id="shop-credits">0</span>. Patch-ups, ammo, and guns. Hatchet always on E.</p>
             </div>
             <button id="close-shop" class="ghost-btn" type="button">Close</button>
           </div>
@@ -137,9 +107,9 @@
       </div>
       <div id="menu">
         <div class="menu-card">
-          <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v35</div>
+          <div class="label cyan" id="menu-kicker">Null X Interactive · BUILD v36</div>
           <h1 id="menu-title">DEAD SIGNAL</h1>
-          <p id="menu-copy" class="subtitle">Cloud save · 1 coin / 5 waves · skill tree. Register or play as guest.</p>
+          <p id="menu-copy" class="subtitle">Register or guest. Headshots, joint breaks, cloud skill tree.</p>
           <button id="start-btn" class="primary-btn" type="button">Begin transmission</button>
           <p class="hint">A/D move · Ctrl crouch · mouse aim · E hatchet · Space kick · Q cycle · R reload · B shop · ESC pause</p>
           <div id="menu-controls"></div>
@@ -147,6 +117,6 @@
       </div>
     </div>
   </div>
-  <script src="js/boot-v14.js?v=20260827v35"></script>
+  <script src="js/boot-v14.js?v=20260827v36"></script>
 </body>
 </html>
