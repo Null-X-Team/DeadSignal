@@ -1,4 +1,4 @@
-// DeadSignal boot v36 — auth, meta, combat anim, guns
+// DeadSignal boot v37 — ragdoll, gore, RPG, gun bg strip
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -22,7 +22,7 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
-  var v = "20260827v36";
+  var v = "20260827v37";
   var parts = 32;
   var idx = 0;
   function afterEngine() {
@@ -35,11 +35,13 @@
         loadScript("js/patch-v32.js?v=" + v, function () {
           loadScript("js/patch-v35.js?v=" + v, function () {
             loadScript("js/patch-v36.js?v=" + v, function () {
-              loadScript("js/ui.js?v=" + v, function () {
-                loadScript("js/gore.js?v=" + v, function () {
-                  loadScript("js/patch-v22.js?v=" + v, function () {
-                    console.log("[DeadSignal] ready v36");
-                    if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
+              loadScript("js/patch-v37.js?v=" + v, function () {
+                loadScript("js/ui.js?v=" + v, function () {
+                  loadScript("js/gore.js?v=" + v, function () {
+                    loadScript("js/patch-v22.js?v=" + v, function () {
+                      console.log("[DeadSignal] ready v37");
+                      if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
+                    });
                   });
                 });
               });
