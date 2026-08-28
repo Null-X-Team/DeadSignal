@@ -1,4 +1,4 @@
-// DeadSignal boot v37 — ragdoll, gore, RPG, gun bg strip
+// DeadSignal boot v38
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -22,7 +22,7 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
-  var v = "20260827v37";
+  var v = "20260827v38";
   var parts = 32;
   var idx = 0;
   function afterEngine() {
@@ -36,11 +36,13 @@
           loadScript("js/patch-v35.js?v=" + v, function () {
             loadScript("js/patch-v36.js?v=" + v, function () {
               loadScript("js/patch-v37.js?v=" + v, function () {
-                loadScript("js/ui.js?v=" + v, function () {
-                  loadScript("js/gore.js?v=" + v, function () {
-                    loadScript("js/patch-v22.js?v=" + v, function () {
-                      console.log("[DeadSignal] ready v37");
-                      if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
+                loadScript("js/patch-v38.js?v=" + v, function () {
+                  loadScript("js/ui.js?v=" + v, function () {
+                    loadScript("js/gore.js?v=" + v, function () {
+                      loadScript("js/patch-v22.js?v=" + v, function () {
+                        console.log("[DeadSignal] ready v38");
+                        if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
+                      });
                     });
                   });
                 });
@@ -58,7 +60,6 @@
         var code = "";
         for (var i = 0; i < arr.length; i++) code += (arr[i] || "");
         (0, eval)(code);
-        console.log("[DeadSignal] engine assembled", !!(window.DeadSignalGame && window.DeadSignalGame.Engine), "len", code.length);
         afterEngine();
       } catch (err) {
         console.error("[DeadSignal] eval failed", err);
