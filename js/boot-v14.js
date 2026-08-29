@@ -22,7 +22,7 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
-  var v = "20260828v41";
+  var v = "20260828v41b";
   var parts = 32, idx = 0;
   function afterEngine() {
     if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
