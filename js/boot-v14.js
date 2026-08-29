@@ -1,4 +1,4 @@
-// DeadSignal boot v39
+// DeadSignal boot v40
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -22,8 +22,9 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
-  var v = "20260827v39";
-  var parts = 32, idx = 0;
+  var v = "20260828v40";
+  var parts = 32;
+  var idx = 0;
   function afterEngine() {
     if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
       showErr("Engine failed to load. Hard-refresh (Ctrl+Shift+R).");
@@ -40,8 +41,10 @@
                     loadScript("js/ui.js?v=" + v, function () {
                       loadScript("js/gore.js?v=" + v, function () {
                         loadScript("js/patch-v22.js?v=" + v, function () {
-                          console.log("[DeadSignal] ready v39");
-                          if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
+                          loadScript("js/patch-v40.js?v=" + v, function () {
+                            console.log("[DeadSignal] ready v40");
+                            if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
+                          });
                         });
                       });
                     });
@@ -68,7 +71,10 @@
       }
       return;
     }
-    loadScript("js/epart_" + idx + ".js?v=" + v, function () { idx++; next(); });
+    loadScript("js/epart_" + idx + ".js?v=" + v, function () {
+      idx++;
+      next();
+    });
   }
   loadScript("js/patch-v34.js?v=" + v, function () {
     loadScript("js/supabase-config.js?v=" + v, function () {
