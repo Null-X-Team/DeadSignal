@@ -1,4 +1,4 @@
-// DeadSignal boot v41
+// DeadSignal boot v43
 (function () {
   function loadScript(src, cb) {
     var s = document.createElement("script");
@@ -22,7 +22,7 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
-  var v = "20260828v42";
+  var v = "20260828v43";
   var parts = 32, idx = 0;
   function afterEngine() {
     if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
@@ -43,8 +43,10 @@
                           loadScript("js/patch-v40.js?v=" + v, function () {
                             loadScript("js/patch-v41.js?v=" + v, function () {
                               loadScript("js/patch-v42.js?v=" + v, function () {
-                                console.log("[DeadSignal] ready v41/v42");
-                                if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
+                                loadScript("js/patch-v43.js?v=" + v, function () {
+                                  console.log("[DeadSignal] ready v43");
+                                  if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
+                                });
                               });
                             });
                           });
