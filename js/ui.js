@@ -104,9 +104,9 @@
         if (menuControls) menuControls.style.display = "none";
         if (startBtn) startBtn.textContent = "Restart containment";
       } else {
-        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v40";
+        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v41";
         if (menuTitle) menuTitle.innerHTML = "Dead<br><span>Signal</span>";
-        if (menuCopy) menuCopy.textContent = "Space = KICK · E = hatchet. Shotgun falloff. Limbs fly off.";
+        if (menuCopy) menuCopy.textContent = "Kills give credits. Bodies fall. Holes + limbs.";
         if (menuControls) menuControls.style.display = "";
         if (startBtn) startBtn.textContent = "Begin transmission";
       }
