@@ -104,7 +104,7 @@
         if (menuControls) menuControls.style.display = "none";
         if (startBtn) startBtn.textContent = "Restart containment";
       } else {
-        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v41";
+        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v43";
         if (menuTitle) menuTitle.innerHTML = "Dead<br><span>Signal</span>";
         if (menuCopy) menuCopy.textContent = "Kills give credits. Bodies fall. Holes + limbs.";
         if (menuControls) menuControls.style.display = "";
@@ -173,7 +173,6 @@
           : '<div class="loadout-thumb placeholder">·</div>';
         var row = document.createElement("div");
         row.className = "shop-item-main";
-        row.innerHTML = thumbHtml + "<div></div>";
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "buy-btn";
@@ -190,6 +189,7 @@
           selectedLoadoutSlot = null;
           engine.pushHud();
         });
+        row.innerHTML = thumbHtml + "<div></div>";
         row.lastChild.appendChild(btn);
         li.addEventListener("mouseenter", function () {
           showStats(Object.assign({}, w, { blurb: it.blurb, pierce: w.pierce }), owned ? 0 : it.cost);
