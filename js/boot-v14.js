@@ -22,7 +22,7 @@
       (m.querySelector(".menu-card") || m).appendChild(p);
     } catch (e) {}
   }
-  var v = "20260828v41b";
+  var v = "20260828v42";
   var parts = 32, idx = 0;
   function afterEngine() {
     if (!(window.DeadSignalGame && window.DeadSignalGame.Engine)) {
@@ -42,8 +42,10 @@
                         loadScript("js/patch-v22.js?v=" + v, function () {
                           loadScript("js/patch-v40.js?v=" + v, function () {
                             loadScript("js/patch-v41.js?v=" + v, function () {
-                              console.log("[DeadSignal] ready v41");
-                              if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
+                              loadScript("js/patch-v42.js?v=" + v, function () {
+                                console.log("[DeadSignal] ready v41/v42");
+                                if (window.DeadSignalAuth) window.DeadSignalAuth.gate();
+                              });
                             });
                           });
                         });
