@@ -1,4 +1,4 @@
-// DeadSignal v41 — credits guaranteed, bodies fall, hit-local holes + flying limbs
+// DeadSignal v41 — credits/holes/limbs (BUILD tag owned by v43)
 (function () {
   var G = window.DeadSignalGame;
   if (!G || !G.Engine) return;
@@ -93,7 +93,6 @@
     }
   }
 
-  // CRITICAL: award credits BEFORE anything marks dead
   proto.kill = function (e) {
     if (!e) return;
     if (!e._scored) {
@@ -274,10 +273,6 @@
     } catch (err) {}
   };
 
-  var tag = document.getElementById("build-tag");
-  if (tag) tag.textContent = "BUILD v41 — credits · fall · holes · limbs";
-  var kicker = document.getElementById("menu-kicker");
-  if (kicker) kicker.textContent = "Null X Interactive · BUILD v41";
-
+  // build tag owned by v43 — do not set here
   console.log("[DeadSignal] v41 credits+fall+holes+limbs");
 })();
