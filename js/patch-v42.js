@@ -1,15 +1,16 @@
-// DeadSignal v42 — lock BUILD tag to v41 (ui/v40 were overwriting it)
+// DeadSignal v42 — build-tag lock (points at current build: v43)
 (function () {
+  var LABEL = "BUILD v43 — credits locked";
+  var KICKER = "Null X Interactive · BUILD v43";
   function forceBuild() {
     try {
       var tag = document.getElementById("build-tag");
-      if (tag) tag.textContent = "BUILD v41 — credits · fall · holes · limbs";
+      if (tag) tag.textContent = LABEL;
       var k = document.getElementById("menu-kicker");
       if (k) {
         var t = k.textContent || "";
-        // only rewrite version labels, not death screen text
         if (/BUILD v/i.test(t) || /Null X Interactive/i.test(t)) {
-          if (!/BUILD v41/i.test(t)) k.textContent = "Null X Interactive · BUILD v41";
+          if (!/BUILD v43/i.test(t)) k.textContent = KICKER;
         }
       }
       var copy = document.getElementById("menu-copy");
@@ -22,14 +23,13 @@
   var n = 0;
   var id = setInterval(function () {
     forceBuild();
-    if (++n > 60) clearInterval(id); // first ~6s after load
+    if (++n > 80) clearInterval(id);
   }, 100);
-  // also re-assert whenever menu becomes visible
   try {
     var menu = document.getElementById("menu");
     if (menu && window.MutationObserver) {
       new MutationObserver(forceBuild).observe(menu, { attributes: true, attributeFilter: ["class"] });
     }
   } catch (e) {}
-  console.log("[DeadSignal] v42 build-tag lock");
+  console.log("[DeadSignal] v42 build-tag lock → v43");
 })();
