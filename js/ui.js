@@ -104,7 +104,7 @@
         if (menuControls) menuControls.style.display = "none";
         if (startBtn) startBtn.textContent = "Restart containment";
       } else {
-        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v39";
+        if (menuKicker) menuKicker.textContent = "Null X Interactive · BUILD v40";
         if (menuTitle) menuTitle.innerHTML = "Dead<br><span>Signal</span>";
         if (menuCopy) menuCopy.textContent = "Space = KICK · E = hatchet. Shotgun falloff. Limbs fly off.";
         if (menuControls) menuControls.style.display = "";
