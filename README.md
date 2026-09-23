@@ -15,6 +15,6 @@ Or download this repo and open `index.html` in any browser.
 - **R** reload
 - **Space** pulse kick
 - **E** armory after a wave
-- **1-4** switch guns
+- **1-3** switch guns
 
 Everything lives in one file: `index.html`.
