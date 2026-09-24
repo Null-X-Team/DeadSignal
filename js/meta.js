@@ -13,7 +13,7 @@
     { id: "spd1", branch: "Mobility", name: "Sprint Protocol", max: 4, costs: [1, 2, 3, 4], blurb: "+7% move speed per rank" },
     { id: "eco1", branch: "Economy", name: "Salvage Expert", max: 5, costs: [1, 2, 3, 4, 5], blurb: "+12% credits from kills per rank" },
     { id: "eco2", branch: "Economy", name: "Starting Stash", max: 4, costs: [2, 3, 5, 7], blurb: "+20 starting credits per rank" },
-    { id: "eco3", branch: "Economy", name: "War Bonds", max: 3, costs: [3, 5, 8], blurb: "+1 bonus coin every 5 waves per rank" }
+    { id: "eco3", branch: "Economy", name: "War Bonds", max: 3, costs: [3, 5, 8], blurb: "+1 bonus coin every 5 waves per rank (base: 1 coin every wave)" }
   ];
   var state = { coins: 0, lifetimeWaves: 0, skills: {}, cache: {}, ready: false, dirty: false, secondWindUsed: false };
   function rank(id) { return state.skills[id] | 0; }
@@ -87,12 +87,31 @@
     onWaveCleared: function (waveNum) {
       if (!state.ready) return;
       state.lifetimeWaves = Math.max(state.lifetimeWaves, waveNum | 0);
-      if (waveNum > 0 && waveNum % 5 === 0) {
-        var bonus = 1 + rank("eco3");
-        state.coins += bonus; state.dirty = true;
-        try { var eng = window.__deadSignal; if (eng && eng.say) eng.say("+" + bonus + " COIN" + (bonus > 1 ? "S" : "") + " (wave " + waveNum + ")", 1.4); } catch (e) {}
-        Meta.refreshChip(); Meta.saveToCloud(true);
-      } else state.dirty = true;
+      waveNum = waveNum | 0;
+      if (waveNum > 0) {
+        // v44: 1 coin every wave + War Bonds bonus every 5 waves
+        var gain = 1;
+        if (waveNum % 5 === 0) gain += 1 + rank("eco3");
+        state.coins += gain;
+        state.dirty = true;
+        try {
+          var eng = window.__deadSignal;
+          if (eng && eng.say) eng.say("+" + gain + " COIN" + (gain > 1 ? "S" : "") + " (wave " + waveNum + ")", 1.2);
+        } catch (e) {}
+        Meta.refreshChip();
+        Meta.saveToCloud(true);
+      } else {
+        state.dirty = true;
+      }
+    },
+    addCoins: function (n) {
+      if (!state.ready) return;
+      state.coins = (state.coins | 0) + (n | 0);
+      state.dirty = true;
+      Meta.refreshChip();
+    },
+    grantWaveCoin: function (n) {
+      Meta.addCoins(n || 1);
     },
     buySkill: function (id) {
       if (!state.ready) return { ok: false, error: "Save not ready." };
