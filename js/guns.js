@@ -1,4 +1,3 @@
-// DeadSignal guns v37 — load imgs + strip solid backgrounds (block fix)
 (function () {
   function loadFirst(paths, onReady) {
     var img = new Image();
@@ -134,6 +133,23 @@
   loadFirst(["imgs/M24sniper.jpeg", "imgs/sniper.png"], function (img) {
     setGun(["sniper"], img, false);
   });
+
+  // v44 — extra gun image aliases (reuse existing art where no unique asset exists)
+  loadFirst(["imgs/Glock.png"], function (img) { setGun(["deagle"], img, true); });
+  loadFirst(["imgs/MP5.png"], function (img) { setGun(["vector", "uzi"], img, false); });
+  loadFirst(["imgs/M4A1.png", "imgs/M16A4.png"], function (img) {
+    setGun(["ak", "scar"], img, false);
+  });
+  loadFirst(["imgs/mossberg590.jpg", "imgs/pump.png"], function (img) {
+    setGun(["doublebarrel"], img, false);
+  });
+  loadFirst(["imgs/M24sniper.jpeg", "imgs/sniper.png"], function (img) {
+    setGun(["crossbow"], img, false);
+  });
+  loadFirst(["imgs/M249SAW.jpg", "imgs/LMG.png"], function (img) {
+    setGun(["minigun"], img, false);
+  });
+
   (function () {
     var c = document.createElement("canvas");
     c.width = 128; c.height = 40;
